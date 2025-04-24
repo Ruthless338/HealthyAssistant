@@ -75,7 +75,7 @@ export default {
         login() {
 			const self = this;
 			if (self.form.username !== "" && self.form.userpwd !== "") {
-				axios.post('http://localhost:8000/users/login', {
+				axios.post('http://localhost:8080/api/auth/login', {
 					username: self.form.username,
 					password: self.form.userpwd,
 				})
@@ -121,7 +121,7 @@ export default {
         register () {
             const self = this;
             if(self.form.username != ""  && self.form.userpwd != "") {
-                axios.post('http://localhost:8000/users/register', {
+                axios.post('http://localhost:8000/api/register', {
 						username: self.form.username,
 						password: self.form.userpwd
                 })

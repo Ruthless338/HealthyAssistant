@@ -6,3 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
 }
+// This interface extends JpaRepository to provide CRUD operations for the User entity.
+// It includes a custom method to find a user by their username.

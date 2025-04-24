@@ -1,7 +1,7 @@
 <!-- src/components/GitHubLink.vue -->
  <template>
     <a 
-        href="https://github.com/TLEphage/Beijing-Navigation-System"
+        href="https://github.com/Ruthless338/HealthyAssistant"
         target="_blank"
         class="github-link">
         <img src="../assets/github.png" 
