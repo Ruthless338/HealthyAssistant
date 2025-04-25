@@ -43,7 +43,7 @@
 
 <script>
 import axios from 'axios';
-import {useStore} from 'vuex';
+import { useStore } from 'vuex';
 export default {
     name: 'LoginRegister',
 	setup() {
@@ -81,24 +81,24 @@ export default {
 				})
 				.then(res => {
 					console.log(res.data);
-					// 检查后端返回的用户数据
-					if (res.data.id) { // 如果有id，表示登录成功
+					if (res.data.status === 200) {
 						alert("登录成功！");
 						//存储用户信息到Vuex store 或本地存储
 						self.store.commit('setUser', res.data);
 						//通知导航栏更新
 						self.$emit('user-login', {
 							isLoggedIn:true,
-							username:res.data.username,
-							userAvatar:res.data.avatarPath,
+							username:res.data.user.username,
+							userAvatar:res.data.user.avatar,
 						});
-						if (res.data.hobbies) { // 如果有兴趣信息，跳转到旅游推荐
-							self.$router.push({name: 'Recommend'});
+						//登录后判断用户是否填写过身体基本信息以及兴趣、部位、目标，如果没有则跳转到填写页面
+						if (res.data.user.interest&&res.data.user.part&&res.data.user.goal) {
+							self.$router.push({name: 'Plan'});
 						} else {
-							self.$router.push({name: 'InterestSelector'});
+							self.$router.push({name: 'Selector'});
 						}
 					} else {
-						// 如果没有 token，可能是后端返回了错误信息
+						// 登录失败，用户名或密码错误
 						alert("用户名或密码错误！");
 					}
 				})
@@ -107,7 +107,7 @@ export default {
 					// 捕获网络请求错误或后端抛出的异常
 					if (err.response && err.response.data) {
 						// 如果后端抛出了 HTTPException，通常会在 err.response.data 中返回错误信息
-						alert("登录失败：" + err.response.data.detail);
+						alert("登录失败：" + err.response.data.message);
 					} else {
 						// 其他网络错误
 						alert("登录失败：网络错误");
@@ -121,13 +121,13 @@ export default {
         register () {
             const self = this;
             if(self.form.username != ""  && self.form.userpwd != "") {
-                axios.post('http://localhost:8000/api/register', {
+                axios.post('http://localhost:8080/api/register', {
 						username: self.form.username,
 						password: self.form.userpwd
                 })
                 .then(
                     res => {
-                        if(res.data.message === "注册成功"){
+                        if(res.data.status === 200){
 							alert("注册成功！");
 							this.isLogin = true;
 						} else {
@@ -141,7 +141,7 @@ export default {
 					// 捕获网络请求错误或后端抛出的异常
 					if (err.response && err.response.data) {
 						// 如果后端抛出了 HTTPException，通常会在 err.response.data 中返回错误信息
-						alert("注册失败：" + err.response.data.detail);
+						alert("注册失败：" + err.response.data.message);
 					} else {
 						// 其他网络错误
 						alert("登录失败：网络错误");

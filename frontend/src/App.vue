@@ -9,7 +9,6 @@
     />
     <div class="content-container">
       <router-view @user-login="handleUserLogin"></router-view>
-      <!-- 其他页面组件 -->
     </div>
   </div>
 </template>
