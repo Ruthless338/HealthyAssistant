@@ -1,0 +1,4 @@
+axios
+vue-router@4
+vuex@next
+vuex@4
