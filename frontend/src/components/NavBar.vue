@@ -24,8 +24,8 @@
             <div v-if="!isLoggedIn" class="login-btn" @click="handleLoginRegister">登录/注册</div>
             <!-- 用户头像和用户名 -->
             <div v-else class="user-profile" @click="goToUserProfile">
-                <img src="" alt="User Avatar" class="avatar" />
-                <div class="username">{{ username }}</div>
+                <img :src="user.avatar" alt="User Avatar" class="avatar" />
+                <div class="username">{{ user.username || '用户' }}</div>
             </div>
         </div>
     </div>
@@ -39,39 +39,29 @@ export default{
         GitHubLink,
     },
     props:{
-        logo:{
-            type:String,
-            default:'',
-        },
-        navItems:{
-            type:Array,
-            default:()=>[
-                {name:'运动计划', route:'Plan'},
-                {name:'运动记录', route:'Record'},
-                {name:'饮食管理', route:'Diet'},
-                {name:'运动社区', route:'Community'},
-            ]
-        },
         isLoggedIn:{
             type:Boolean,
             default:false,
         },
-        userAvatar:{
-            type:String,
-            default:''
-        },
-        username:{
-          type:String,
-          default:''
-        }
     },
     data(){
         return {
-            activeIndex:0,
+            activeIndex: 0,
+            navItems: [ 
+              { name: '运动计划', route: 'Plan' },
+              { name: '运动记录', route: 'Record' },
+              { name: '饮食管理', route: 'Diet' },
+              { name: '运动社区', route: 'Community' },
+            ],
+            logo: '', 
         }
     },
     computed: {
         ...mapState(['user']),
+        // 现在可以直接通过 this.user 来访问 user 对象
+        isLoggedIn() {
+            return this.user.isLoggedIn;
+        },
     },
     methods:{
         handleNavClick(index, route){
@@ -85,7 +75,6 @@ export default{
         goToUserProfile(){
             console.log('goToUserProfile');
             this.$router.push({name:'UserProfile'});
-            console.log('gotoed');
         }
     }
 }

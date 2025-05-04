@@ -8,8 +8,6 @@ import lombok.Getter;
 @Setter
 @Getter
 public class UserRecord extends User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recordId; // 记录ID
 
     private String recordDate; // 记录日期

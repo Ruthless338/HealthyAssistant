@@ -111,80 +111,98 @@
     </div>
   </template>
   
-  <script setup>
-  import { ref, reactive } from 'vue'
-  import axios from 'axios'
-  import { useStore } from 'vuex'
+<script>
+import { ref, reactive } from 'vue'
+import axios from 'axios'
+import { useStore } from 'vuex'
 
-  const store = useStore()
-  
-  const form = reactive({
-    gender: '',
-    age: null,
-    height: null,
-    weight: null,
-    goal: [],
-    interest: [],
-    part: []
-  })
-  
-  const isSubmitting = ref(false)
-  
-  // 选项配置
-  const genderOptions = [
-    { label: '男性', value: 'male' },
-    { label: '女性', value: 'female' }
-  ]
-  
-  const goalOptions = [
-    '全身减脂减重',
-    '局部变瘦更紧致',
-    '增肌塑形提升线条',
-    '提升运动能力/成绩',
-    '保持健康',
-    '康复/疼痛缓解'
-  ]
-  
-  const interestOptions = [
-    '跳舞', '跳绳', '跑步', '健身', 
-    '瑜伽', '游泳', '骑行', '拳击', '徒手训练'
-  ]
-  
-  const partOptions = [
-    '全身', '肩背', '腰腹', '臀部', 
-    '手臂', '腿部', '胸部'
-  ]
-  
-  // 切换多选
-  const toggleSelection = (field, value) => {
-    const index = form[field].indexOf(value)
-    if (index === -1) {
-      form[field].push(value)
-    } else {
-      form[field].splice(index, 1)
-    }
-  }
-  
-  // 提交表单
-  const submitForm = async () => {
-    try {
-      isSubmitting.value = true
-      const { username, password } = store.state.user 
-      const formData = {
-        ...form,
-        username,
-        password
+export default {
+  name: 'Selector',
+  setup() {
+    const store = useStore()
+
+    // 选项配置
+    const genderOptions = [
+      { label: '男性', value: 'male' },
+      { label: '女性', value: 'female' }
+    ]
+    const form = reactive({
+      gender: '',
+      age: null,
+      height: null,
+      weight: null,
+      goal: [],
+      interest: [],
+      part: []
+    })
+    const isSubmitting = ref(false)
+    const goalOptions = [
+      '全身减脂减重',
+      '局部变瘦更紧致',
+      '增肌塑形提升线条',
+      '提升运动能力/成绩',
+      '保持健康',
+      '康复/疼痛缓解'
+    ]
+    const interestOptions = [
+      '跳舞', '跳绳', '跑步', '健身',
+      '瑜伽', '游泳', '骑行', '拳击', '徒手训练'
+    ]
+    const partOptions = [
+      '全身', '肩背', '腰腹', '臀部',
+      '手臂', '腿部', '胸部'
+    ]
+
+    // 方法
+    const submitForm = async () => {
+      try {
+        isSubmitting.value = true
+        const { username, password } = store.state.user // 确保 store 中有 user 数据
+        const formData = {
+          username: username,
+          password: password,
+          gender: form.gender,
+          age: form.age,
+          height: form.height,
+          weight: form.weight,
+          goal: form.goal,
+          interest: form.interest,
+          part: form.part,
+          avatar: 'https://pic1.imgdb.cn/item/6814b55e58cb8da5c8d6f932.jpg'
+        }
+        await axios.post('http://localhost:8000/api/auth/update', formData)
+        alert('信息提交成功！')
+        this.$router.push({ name: 'Plan' });
+      } catch (error) {
+        alert('提交失败，请稍后重试')
+        console.error('提交失败:', error)
+      } finally {
+        isSubmitting.value = false
       }
-      await axios.post('http://localhost:8080/api/auth/update', formData)
-      alert('信息提交成功！')
-      
-    } catch (error) {
-      alert('提交失败，请稍后重试')
-    } finally {
-      isSubmitting.value = false
+    }
+
+    const toggleSelection = (field, value) => {
+      const index = form[field].indexOf(value)
+      if (index === -1) {
+        form[field].push(value)
+      } else {
+        form[field].splice(index, 1)
+      }
+    }
+
+    return {
+      form,
+      isSubmitting,
+      genderOptions,
+      goalOptions,
+      interestOptions,
+      partOptions,
+      submitForm,
+      toggleSelection
     }
   }
-  </script>
+}
+</script>
   
   <style scoped>
   .container {

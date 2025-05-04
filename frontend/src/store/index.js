@@ -5,11 +5,17 @@ export default createStore({
     state: {
         user: {
             isLoggedIn: false,
+            id: -1,
             username: '',
-            avatarPath: '',
-            role: '',
-            signature: '',
-            hobbies: []
+            password:'',
+            avatar: '',
+            age: 0,
+            height: 0.0,
+            weight: 0.0,
+            gender: '',
+            goal: [],
+            interest: [],
+            part: []
         }
     },
     mutations: {
@@ -18,15 +24,16 @@ export default createStore({
         },
         logout(state) {
             state.user.isLoggedIn = false;
+            state.user.id = -1;
             state.user.username = '';
-            state.user.avatarPath = '';
-            state.user.role = '';
-            state.user.signature = '';
-            state.user.hobbies = [];
+            state.user.avatar = '';
+            state.user.age = 0;
+            state.user.height = 0.0;
+            state.user.weight = 0.0;
+            state.user.gender = '';
+            state.user.goal = [];
+            state.user.interest = [];
+            state.user.part = [];
         }
-    },
-    getters: {
-        isLoggedIn: state => state.user.isLoggedIn,
-        user: state => state.user
     }
 });

@@ -19,15 +19,17 @@ public class User {
     private int age;
     private double height;
     private double weight;
-    //目标：全身减脂减重、局部变瘦更紧致、增肌塑形提升线条、提升运动能力/成绩、保持健康、康复/疼痛缓解
-    private String[] goal; 
-    //兴趣：跳舞、跳绳、跑步、健身、瑜伽、游泳、骑行、拳击、徒手训练
-    private String[] interest;
-    //部位：全身、肩背、腰腹、臀部、手臂、腿部、胸部
-    private String[] part;
+    // 目标：全身减脂减重、局部变瘦更紧致、增肌塑形提升线条、提升运动能力/成绩、保持健康、康复/疼痛缓解
+    @ElementCollection
+    private List<String> goal;
+    // 兴趣：跳舞、跳绳、跑步、健身、瑜伽、游泳、骑行、拳击、徒手训练
+    @ElementCollection
+    private List<String> interest;
+    // 部位：全身、肩背、腰腹、臀部、手臂、腿部、胸部
+    @ElementCollection
+    private List<String> part;
     private String avatar; // 头像的URL或路径
     private String gender;
-
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserRecord> userRecords;
