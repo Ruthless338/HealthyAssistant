@@ -51,6 +51,8 @@ public class UserService {
     }
 
     public Optional<User> getUserById(Long userId) {
+        System.out.println("Fetching user with ID: " + userId);
+        System.out.println("User: " + userRepository.findById(userId));
         return userRepository.findById(userId);
     }
 }

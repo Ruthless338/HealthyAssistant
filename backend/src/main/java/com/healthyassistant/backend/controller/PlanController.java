@@ -28,6 +28,7 @@ public class PlanController {
     @PostMapping("/generate")
     public ResponseEntity<?> generatePlan(@RequestBody UserRequest request) {
         try {
+            System.out.println("Generating plan for user with ID: " + request.getId());
             User user = userService.getUserById(request.getId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
             WeekPlan plan = deepSeekAIService.generatePlan(user);

@@ -33,4 +33,20 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserRecord> userRecords;
+
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", age=" + age +
+                ", height=" + height +
+                ", weight=" + weight +
+                ", goal=" + goal +
+                ", interest=" + interest +
+                ", part=" + part +
+                ", avatar='" + avatar + '\'' +
+                ", gender='" + gender + '\'' +
+                '}';
+    }
 }
