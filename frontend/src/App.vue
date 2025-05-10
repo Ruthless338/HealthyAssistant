@@ -27,15 +27,6 @@ export default {
   },
   computed:{
     ...mapState(['user']),
-    isLoggedIn(){
-      return this.user.isLoggedIn;
-    },
-    username(){
-      return this.user.username;
-    },
-    userAvatar(){
-      return this.user.userAvatar;
-    },
   },
   methods:{
     handleRouteChange(route){

@@ -50,7 +50,6 @@ export default{
             navItems: [ 
               { name: '运动计划', route: 'Plan' },
               { name: '运动记录', route: 'Record' },
-              { name: '饮食管理', route: 'Diet' },
               { name: '运动社区', route: 'Community' },
             ],
             logo: '', 
@@ -58,7 +57,6 @@ export default{
     },
     computed: {
         ...mapState(['user']),
-        // 现在可以直接通过 this.user 来访问 user 对象
         isLoggedIn() {
             return this.user.isLoggedIn;
         },

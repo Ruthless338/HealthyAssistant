@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Setter;
 import lombok.Getter;
 import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity // 表示该类是一个实体类
 @Setter // 自动生成setter方法
@@ -31,6 +32,7 @@ public class User {
     private String avatar; // 头像的URL或路径
     private String gender;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserRecord> userRecords;
 

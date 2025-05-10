@@ -80,7 +80,8 @@ export default {
 					password: self.form.userpwd,
 				})
 				.then(res => {
-					console.log(res.data);
+					console.log("登录状态"+res.data.status);
+					console.log(res.data.user);
 					if (res.data.status === 200) {
 						alert("登录成功！");
 						//存储用户信息到Vuex store 或本地存储
@@ -90,7 +91,7 @@ export default {
 						});
 						//登录后判断用户是否填写过身体基本信息以及兴趣、部位、目标，如果没有则跳转到填写页面
 						if (res.data.user.interest.length > 0 && res.data.user.part.length > 0 &&res.data.user.goal.length > 0 ) {
-							self.$router.push({name: 'Plan'});
+							self.$router.push({name: 'Record'});
 						} else {
 							self.$router.push({name: 'Selector'});
 						}

@@ -2,110 +2,59 @@ package com.healthyassistant.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Setter
+@Getter
 @Table(name = "shares")
 public class Share {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "user_id")
-    private Long userId;
-    
-    @Column(length = 255)
+
+    @Column(nullable = false, length = 100)
     private String title;
-    
-    @Column(length = 500, nullable = false)
+
+    @Column(nullable = false, length = 1000)
     private String content;
-    
-    @Column(name = "image_url")
-    private String imageUrl;
-    
-    @Column(name = "like_count", nullable = false)
-    private Integer likeCount;
-    
-    @Column(name = "comment_count", nullable = false)
-    private Integer commentCount;
-    
-    @Column(name = "create_time")
-    private LocalDateTime createTime;
-    
-    @Column(name = "update_time")
-    private LocalDateTime updateTime;
 
-    // Getters and Setters
-    
-    public Long getId() {
-        return id;
+    @ElementCollection
+    @CollectionTable(name = "share_images", joinColumns = @JoinColumn(name = "share_id"))
+    private List<String> images = new ArrayList<>();
+
+    private Integer likes = 0;
+    private Integer views = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    // 自动设置时间
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
-    public Long getUserId() {
-        return userId;
-    }
+    @ManyToMany
+    @JoinTable(name = "share_likes", joinColumns = @JoinColumn(name = "share_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> likedUsers = new HashSet<>();
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public Integer getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(Integer likeCount) {
-        this.likeCount = likeCount;
-    }
-
-    public Integer getCommentCount() {
-        return commentCount;
-    }
-
-    public void setCommentCount(Integer commentCount) {
-        this.commentCount = commentCount;
-    }
-
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
-
-    public LocalDateTime getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(LocalDateTime updateTime) {
-        this.updateTime = updateTime;
-    }
 }

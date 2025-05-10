@@ -1,78 +1,88 @@
 package com.healthyassistant.backend.service;
 
+import com.healthyassistant.backend.dto.ShareDTO;
 import com.healthyassistant.backend.model.Share;
+import com.healthyassistant.backend.model.User;
 import com.healthyassistant.backend.repository.ShareRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ShareService {
-    
-    @Autowired
-    private ShareRepository shareRepository;
-    
-    // 创建分享
+
+    private final ShareRepository shareRepository;
+    private final UserService userService;
+
+    public ShareService(ShareRepository shareRepository, UserService userService) {
+        this.shareRepository = shareRepository;
+        this.userService = userService;
+    }
+
     @Transactional
-    public Share createShare(Share share) {
-        share.setCreateTime(LocalDateTime.now());
-        share.setUpdateTime(LocalDateTime.now());
-        share.setLikeCount(0);
-        share.setCommentCount(0);
+    public Share createShare(Share share, Long userId) {
+        User author = userService.getUserById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        share.setAuthor(author);
         return shareRepository.save(share);
     }
-    
-    // 获取用户的所有分享
+
+    public List<ShareDTO> getAllShares() {
+        List<Share> shares = shareRepository.findAllByOrderByCreatedAtDesc();
+        return shares.stream().map(share -> {
+            ShareDTO dto = new ShareDTO();
+            dto.setId(share.getId());
+            dto.setTitle(share.getTitle());
+            dto.setContent(share.getContent());
+            dto.setAuthorName(share.getAuthor().getUsername()); // 确保加载作者信息
+            dto.setImages(share.getImages());
+            dto.setLikes(share.getLikes());
+            dto.setViews(share.getViews());
+            dto.setCreatedAt(share.getCreatedAt());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    public List<Share> searchShares(String keyword) {
+        return shareRepository.searchShares(keyword);
+    }
+
     public List<Share> getSharesByUserId(Long userId) {
-        return shareRepository.findByUserIdOrderByCreateTimeDesc(userId);
+        return shareRepository.findByAuthorIdOrderByCreatedAtDesc(userId);
     }
-    
-    // 获取所有分享
-    public List<Share> getAllShares() {
-        return shareRepository.findAllByOrderByCreateTimeDesc();
-    }
-    
-    // 获取单个分享详情
-    public Optional<Share> getShareById(Long id) {
-        return shareRepository.findById(id);
-    }
-    
-    // 更新分享
+
     @Transactional
-    public Share updateShare(Long id, Share shareDetails) {
-        Share share = shareRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Share not found with id: " + id));
-        
-        share.setTitle(shareDetails.getTitle());
-        share.setContent(shareDetails.getContent());
-        share.setImageUrl(shareDetails.getImageUrl());
-        share.setUpdateTime(LocalDateTime.now());
-        
-        return shareRepository.save(share);
+    public ShareDTO likeShare(Long shareId, Long userId) {
+        Share share = shareRepository.findById(shareId)
+                .orElseThrow(() -> new RuntimeException("Share not found"));
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (share.getLikedUsers().contains(user)) {
+            share.getLikedUsers().remove(user);
+            share.setLikes(share.getLikes() - 1);
+        } else {
+            share.getLikedUsers().add(user);
+            share.setLikes(share.getLikes() + 1);
+        }
+
+        Share saved = shareRepository.save(share);
+        return convertToDTO(saved, user.getId());
     }
-    
-    // 删除分享
+
     @Transactional
-    public void deleteShare(Long id) {
-        Share share = shareRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Share not found with id: " + id));
-        
-        shareRepository.delete(share);
+    public void incrementViews(Long id) {
+        shareRepository.updateViewCount(id);
     }
-    
-    // 点赞分享
-    @Transactional
-    public void likeShare(Long id) {
-        shareRepository.increaseLikeCount(id);
+
+    private ShareDTO convertToDTO(Share share, Long userId) {
+        ShareDTO dto = new ShareDTO();
+        dto.setIsLiked(share.getLikedUsers().stream()
+                .anyMatch(u -> u.getId().equals(userId)));
+        dto.setLikes(share.getLikes());
+        return dto;
     }
-    
-    // 评论分享
-    @Transactional
-    public void commentShare(Long id) {
-        shareRepository.increaseCommentCount(id);
-    }
+
 }

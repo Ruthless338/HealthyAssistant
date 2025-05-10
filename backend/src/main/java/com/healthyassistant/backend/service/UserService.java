@@ -15,7 +15,8 @@ public class UserService {
     private UserRepository userRepository; // UserRepository实例，用于访问数据库
 
     public User authenticateUser(String username, String password) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         if (user != null && user.getPassword().equals(password)) {
             return user;
         }
@@ -34,7 +35,8 @@ public class UserService {
     }
 
     public boolean update(User user) {
-        User existingUser = userRepository.findByUsername(user.getUsername());
+        User existingUser = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         if (existingUser == null) {
             return false; // 用户不存在，更新失败
         }
@@ -47,7 +49,7 @@ public class UserService {
         existingUser.setAvatar(user.getAvatar());
         existingUser.setGender(user.getGender());
         userRepository.save(existingUser);
-        return true; // 更新成功
+        return true;
     }
 
     public Optional<User> getUserById(Long userId) {

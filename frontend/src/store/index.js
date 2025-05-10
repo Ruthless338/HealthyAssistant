@@ -16,7 +16,8 @@ export default createStore({
             goal: [],
             interest: [],
             part: []
-        }
+        },
+        records: [],
     },
     mutations: {
         setUser(state, user) {
@@ -34,6 +35,12 @@ export default createStore({
             state.user.goal = [];
             state.user.interest = [];
             state.user.part = [];
+        },
+        setRecords(state, records) {
+            state.records = records;
+        },
+        addRecord(state, record){
+            state.records.push(record);
         }
     }
 });
