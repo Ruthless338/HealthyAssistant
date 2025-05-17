@@ -5,6 +5,7 @@ import Diet from './views/Diet.vue';
 import Community from './views/Community.vue';
 import LoginRegister from './components/LoginRegister.vue';
 import Selector from './views/Selector.vue';
+import UserProfile from './views/UserProfile.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -38,6 +39,11 @@ const router = createRouter({
             path:'/Selector',
             name:'Selector',
             component:Selector
+        },
+        {
+            path:'/UserProfile',
+            name:'UserProfile',
+            component:UserProfile
         }
     ]
 })

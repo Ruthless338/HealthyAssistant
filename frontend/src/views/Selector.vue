@@ -2,6 +2,15 @@
 <template>
     <div class="container">
       <form @submit.prevent="submitForm" class="user-form">
+        <h1>🏋️‍♀️ 健身Selector</h1>
+        <!-- 新增头像上传区域 -->
+        <div class="form-section">
+          <h2>📸 头像设置</h2>
+          <div class="avatar-uploader">
+            <ImageUpload @uploaded="handleAvatarUpload" />
+            <p class="upload-tip">支持JPG/PNG格式，大小不超过5MB</p>
+          </div>
+        </div>
         <!-- 基本信息区 -->
         <div class="form-section">
           <h2>👤 基本信息</h2>
@@ -112,15 +121,20 @@
   </template>
   
 <script>
-import { ref, reactive } from 'vue'
-import axios from 'axios'
-import { useStore } from 'vuex'
+import { ref, reactive } from 'vue';
+import ImageUpload from '../components/ImageUpload.vue';
+import axios from 'axios';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'Selector',
+  components: {
+    ImageUpload
+  },
   setup() {
-    const store = useStore()
-
+    const store = useStore();
+    const router = useRouter();
     // 选项配置
     const genderOptions = [
       { label: '男性', value: 'male' },
@@ -133,8 +147,12 @@ export default {
       weight: null,
       goal: [],
       interest: [],
-      part: []
+      part: [],
+      avatar: ''
     })
+    const handleAvatarUpload = (url) => {
+      form.avatar = url
+    }
     const isSubmitting = ref(false)
     const goalOptions = [
       '全身减脂减重',
@@ -172,7 +190,7 @@ export default {
         }
         await axios.post('http://localhost:8000/api/auth/update', formData)
         alert('信息提交成功！')
-        this.$router.push({ name: 'Plan' });
+        router.push({ name: 'Plan' });
       } catch (error) {
         alert('提交失败，请稍后重试')
         console.error('提交失败:', error)
@@ -198,7 +216,8 @@ export default {
       interestOptions,
       partOptions,
       submitForm,
-      toggleSelection
+      toggleSelection,
+      handleAvatarUpload
     }
   }
 }
@@ -334,5 +353,16 @@ export default {
     .card-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+  }
+
+  .avatar-uploader {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .upload-tip {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
   }
   </style>
