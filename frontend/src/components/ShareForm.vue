@@ -104,7 +104,20 @@ export default {
 </script>
 
 <style scoped>
-/* 优化后的样式 */
+
+.share-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
 .share-form {
   background: #fff;
   padding: 2rem;
@@ -112,6 +125,7 @@ export default {
   width: 600px;
   max-width: 90%;
   box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  z-index: 2001;
 }
 
 input, textarea {

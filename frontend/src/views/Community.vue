@@ -33,11 +33,11 @@
         >
           <div class="user-info">
             <img 
-              :src="share.author.avatar"
+              :src="share.authorAvatar"
               class="user-avatar"
             >
             <div>
-              <h3>{{ share.author.username }}</h3>
+              <h3>{{ share.authorName }}</h3>
               <time>{{ formatTime(share.createdAt) }}</time>
             </div>
           </div>
@@ -124,11 +124,13 @@ export default {
   methods: {
     async fetchShares() {
       try {
-        const { data } = await axios.get('http://localhost:8000/api/shares/all')
+        const { data } = await axios.get('http://localhost:8000/api/shares/all');
+        console.log('获取分享:', data)
         this.shares = data.map(share => ({
           ...share,
           isLiked: share.isLiked
         }))
+        // console.log('获取分享:', this.shares)
       } catch (error) {
         console.error('获取分享失败:', error)
       } finally {
@@ -144,6 +146,7 @@ export default {
           `http://localhost:8000/api/shares/search?keyword=${encodeURIComponent(this.searchKeyword)}`
         )
         this.shares = data
+        console.log('搜索结果:', this.shares)
       } catch (error) {
         console.error('搜索失败:', error)
       }
@@ -174,7 +177,7 @@ export default {
     },
 
     truncateContent(text) {
-      return text.length > 100 ? text.substring(0, 100) + '...' : text
+      return text.length > 30 ? text.substring(0, 100) + '...' : text
     },
 
     formatTime(date) {
@@ -336,6 +339,7 @@ export default {
   cursor: pointer;
   font-size: 1.25rem;
   transition: transform 0.3s;
+  z-index: 1000;
 }
 
 .fab:hover {

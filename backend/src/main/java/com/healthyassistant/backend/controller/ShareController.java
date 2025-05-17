@@ -40,6 +40,12 @@ public class ShareController {
         return ResponseEntity.ok(shareService.getSharesByUserId(userId));
     }
 
+    // 调用方法: http://localhost:8000/api/shares/${shareId}
+    @GetMapping("/{shareId}")
+    public ResponseEntity<ShareDTO> getShareById(@PathVariable Long shareId) {
+        return ResponseEntity.ok(shareService.getShareById(shareId));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<ShareDTO>> getAllShares() {
         return ResponseEntity.ok(shareService.getAllShares());

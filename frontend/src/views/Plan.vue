@@ -214,7 +214,7 @@ const processPlan = (plan) => ({
       difficulty: ex.difficulty || 3,
       targetArea: ex.parts || ['全身'],
       // image: ex.image || defaultExerciseImage,
-      iamge: defaultExerciseImage,
+      image: defaultExerciseImage,
       favorited: false
     }))
   }))

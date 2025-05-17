@@ -11,7 +11,8 @@ public class ShareDTO {
     private Long id;
     private String title;
     private String content;
-    private String authorName; // 只返回作者名称
+    private String authorName; // 只返回作者名称和头像
+    private String authorAvatar;
     private List<String> images;
     private Integer likes;
     private Integer views;

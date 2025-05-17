@@ -36,7 +36,8 @@ public class ShareService {
             dto.setId(share.getId());
             dto.setTitle(share.getTitle());
             dto.setContent(share.getContent());
-            dto.setAuthorName(share.getAuthor().getUsername()); // 确保加载作者信息
+            dto.setAuthorName(share.getAuthor().getUsername());
+            dto.setAuthorAvatar(share.getAuthor().getAvatar());
             dto.setImages(share.getImages());
             dto.setLikes(share.getLikes());
             dto.setViews(share.getViews());
@@ -85,4 +86,19 @@ public class ShareService {
         return dto;
     }
 
+    public ShareDTO getShareById(Long shareId) {
+        Share share = shareRepository.findById(shareId)
+                .orElseThrow(() -> new RuntimeException("Share not found"));
+        ShareDTO dto = new ShareDTO();
+        dto.setId(share.getId());
+        dto.setTitle(share.getTitle());
+        dto.setContent(share.getContent());
+        dto.setAuthorName(share.getAuthor().getUsername());
+        dto.setAuthorAvatar(share.getAuthor().getAvatar());
+        dto.setImages(share.getImages());
+        dto.setLikes(share.getLikes());
+        dto.setViews(share.getViews());
+        dto.setCreatedAt(share.getCreatedAt());
+        return dto;
+    }
 }

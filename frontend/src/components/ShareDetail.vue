@@ -4,9 +4,9 @@
       <button class="close-btn" @click="close">&times;</button>
       
       <div class="user-info">
-        <img :src="share.author.avatar || '/default-avatar.png'" class="user-avatar">
+        <img :src="share.authorAvatar" class="user-avatar">
         <div>
-          <h3>{{ share.author.username }}</h3>
+          <h3>{{ share.authorName }}</h3>
           <time>{{ formatTime(share.createdAt) }}</time>
         </div>
       </div>
@@ -73,7 +73,12 @@ export default {
     },
 
     async incrementViews() {
-      await axios.post(`http://localhost:8000/api/shares/${this.shareId}/view`)
+      try {
+        await axios.get(`http://localhost:8000/api/shares/${this.shareId}/view`)
+        
+      } catch (error) {
+        console.error('增加浏览量失败:', error)
+      }
     },
 
     async toggleLike() {
@@ -171,5 +176,30 @@ export default {
 
 .liked {
   color: #ff4757;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.user-avatar {
+  width: 50px;  /* 缩小头像尺寸 */
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007bff; /* 添加边框装饰 */
+}
+
+.user-info div {
+  flex: 1;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
 }
 </style>
