@@ -4,7 +4,7 @@
     <!-- 用户信息卡片 -->
     <div class="user-card">
       <div class="avatar-section">
-        <img :src="user.avatar || defaultAvatar" class="user-avatar" />
+        <img :src="'http://localhost:8000/uploads/'+user.avatar || defaultAvatar" class="user-avatar" />
         <div class="user-meta">
           <h2 class="username">{{ user.username }}的智能运动计划</h2>
           <div class="tag-cloud">

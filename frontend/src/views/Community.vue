@@ -33,7 +33,7 @@
         >
           <div class="user-info">
             <img 
-              :src="share.authorAvatar"
+              :src="'http://localhost:8000/uploads/'+share.authorAvatar"
               class="user-avatar"
             >
             <div>
@@ -49,7 +49,7 @@
               <img
                 v-for="(img, idx) in share.images.slice(0, 3)"
                 :key="idx"
-                :src="img"
+                :src="'http://localhost:8000/uploads/' + img"
                 class="preview-image"
               >
               <div v-if="share.images.length > 3" class="more-images">
@@ -234,31 +234,32 @@ export default {
 }
 
 .share-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  padding: 2rem; 
+  border-radius: 16px; 
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08); 
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .share-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+}
+
+.content-preview {
+  font-size: 1.1rem; 
+  color: #444; 
+  margin: 1.2rem 0;
 }
 
 .user-info {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .user-avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  margin-right: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 55px; /* 原45px */
+  height: 55px;
+  border: 2px solid #fff; /* 添加边框 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .content-preview {
@@ -269,8 +270,8 @@ export default {
 
 .image-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 0.3rem;
   margin: 1rem 0;
   position: relative;
 }

@@ -187,7 +187,7 @@ export default {
           interest: form.interest,
           part: form.part,
           // currentPlan: currentPlan,
-          avatar: 'https://pic1.imgdb.cn/item/6814b55e58cb8da5c8d6f932.jpg'
+          avatar: form.avatar
         }
         await axios.post('http://localhost:8000/api/auth/update', formData)
         alert('信息提交成功！')

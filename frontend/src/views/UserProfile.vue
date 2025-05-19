@@ -3,7 +3,7 @@
     <!-- 用户信息头部 -->
     <div class="profile-header">
       <div class="avatar-section">
-        <img :src="user.avatar" class="user-avatar">
+        <img :src="'http://localhost:8000/uploads/'+user.avatar" class="user-avatar">
         <button class="edit-btn" @click="handleEdit">编辑资料</button>
       </div>
       

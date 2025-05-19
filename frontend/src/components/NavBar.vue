@@ -24,7 +24,7 @@
             <div v-if="!isLoggedIn" class="login-btn" @click="handleLoginRegister">登录/注册</div>
             <!-- 用户头像和用户名 -->
             <div v-else class="user-profile" @click="goToUserProfile">
-                <img :src="user.avatar" alt="User Avatar" class="avatar" />
+                <img :src="'http://localhost:8000/uploads/'+user.avatar" alt="User Avatar" class="avatar" />
                 <div class="username">{{ user.username || '用户' }}</div>
             </div>
         </div>
