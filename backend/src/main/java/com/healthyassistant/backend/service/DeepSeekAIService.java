@@ -73,8 +73,8 @@ public class DeepSeekAIService {
                                 {
                                     "name": "动作名称",
                                     "description": "动作详细说明",
-                                    "group": 3,
-                                    "interval": 60,
+                                    "groups": "动作组数",
+                                    "interval": "每组之间的间隔",
                                     "image": "图片URL"
                                 }
                             ]

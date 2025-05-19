@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 @Setter
 @Getter
+@Table(name = "user_record")
 public class UserRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -194,10 +194,15 @@ onMounted(async () => {
 // 方法定义
 const fetchExercisePlan = async () => {
   try {
+    if (user.value.currentPlan && !user.value.profileModified) {
+      exercisePlan.value = processPlan(user.value.currentPlan)
+      return ;
+    }
     const response = await axios.post('http://localhost:8000/api/plan/generate', {
        id: user.value.id 
     });
-    exercisePlan.value = processPlan(response.data)
+    exercisePlan.value = processPlan(response.data);
+    store.commit('updateUserPlan', response.data);
   } catch (err) {
     error.value = err.response?.data?.message || '网络连接异常'
   }
@@ -208,7 +213,7 @@ const processPlan = (plan) => ({
     dayNumber: dayIndex + 1,
     exercises: day.exercises.map(ex => ({
       ...ex,
-      sets: ex.group || 3,
+      sets: ex.groups || 3,
       reps: ex.reps || 12,
       interval: ex.interval ? `${ex.interval}秒` : '60秒',
       difficulty: ex.difficulty || 3,

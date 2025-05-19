@@ -15,7 +15,9 @@ export default createStore({
             gender: '',
             goal: [],
             interest: [],
-            part: []
+            part: [],
+            currentPlan: null,
+            profileModified: false
         },
         records: [],
     },
@@ -41,6 +43,13 @@ export default createStore({
         },
         addRecord(state, record){
             state.records.push(record);
+        },
+        updateUserPlan(state, plan) {
+            state.user.currentPlan = plan;
+            state.user.profileModified = false;
+        },
+        setProfileModified(state, modified) {
+            state.user.profileModified = modified;
         }
     }
 });

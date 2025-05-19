@@ -5,12 +5,13 @@ import java.util.List;
 import jakarta.persistence.*;
 import lombok.Setter;
 import lombok.Getter;
-import jakarta.persistence.CascadeType;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity // 表示该类是一个实体类
 @Setter // 自动生成setter方法
 @Getter // 自动生成getter方法
+@Table(name = "user")
 public class User {
     @Id // 表示该字段是主键
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 主键自增策略
@@ -35,6 +36,13 @@ public class User {
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserRecord> userRecords;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "week_plan_id")
+    private WeekPlan currentPlan;
+
+    @Transient // 表示该字段不需要持久化到数据库
+    private boolean profileModified = false; // 用于标记用户信息是否已修改
 
     public String toString() {
         return "User{" +

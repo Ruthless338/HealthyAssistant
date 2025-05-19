@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
+@Table(name = "user_diet")
 public class UserDiet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

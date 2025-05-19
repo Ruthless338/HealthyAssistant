@@ -3,6 +3,9 @@ package com.healthyassistant.backend.service;
 import com.healthyassistant.backend.model.User;
 import com.healthyassistant.backend.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository; // UserRepository实例，用于访问数据库
 
+    @Transactional
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
     public User authenticateUser(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -24,7 +32,8 @@ public class UserService {
     }
 
     public boolean register(String username, String password) {
-        if (userRepository.findByUsername(username) != null) {
+        System.out.println("Register finding: " + userRepository.findByUsername(username));
+        if (userRepository.findByUsername(username).isPresent()) {
             return false;
         }
         User user = new User();
@@ -34,12 +43,24 @@ public class UserService {
         return true;
     }
 
+    @Transactional
     public boolean update(User user) {
         User existingUser = userRepository.findByUsername(user.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        if (existingUser == null) {
-            return false; // 用户不存在，更新失败
+
+        // 检测字段变更
+        boolean modified = !Objects.equals(existingUser.getAge(), user.getAge()) ||
+                !Objects.equals(existingUser.getHeight(), user.getHeight()) ||
+                !Objects.equals(existingUser.getWeight(), user.getWeight()) ||
+                !Objects.equals(existingUser.getGoal(), user.getGoal()) ||
+                !Objects.equals(existingUser.getInterest(), user.getInterest()) ||
+                !Objects.equals(existingUser.getPart(), user.getPart()) ||
+                !Objects.equals(existingUser.getGender(), user.getGender());
+
+        if (modified) {
+            existingUser.setProfileModified(true); // 标记需要重新生成计划
         }
+
         existingUser.setAge(user.getAge());
         existingUser.setHeight(user.getHeight());
         existingUser.setWeight(user.getWeight());

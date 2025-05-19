@@ -8,6 +8,7 @@ import java.util.List;
 @Entity // 添加@Entity注解
 @Getter
 @Setter
+@Table(name = "day_plan")
 public class DayPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

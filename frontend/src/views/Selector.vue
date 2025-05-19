@@ -186,10 +186,12 @@ export default {
           goal: form.goal,
           interest: form.interest,
           part: form.part,
+          // currentPlan: currentPlan,
           avatar: 'https://pic1.imgdb.cn/item/6814b55e58cb8da5c8d6f932.jpg'
         }
         await axios.post('http://localhost:8000/api/auth/update', formData)
         alert('信息提交成功！')
+        store.commit('setProfileModified', true);
         router.push({ name: 'Plan' });
       } catch (error) {
         alert('提交失败，请稍后重试')
