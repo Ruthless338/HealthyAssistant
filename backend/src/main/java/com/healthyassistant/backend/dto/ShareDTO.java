@@ -16,6 +16,7 @@ public class ShareDTO {
     private List<String> images;
     private Integer likes;
     private Integer views;
+    private Integer comments;
     private LocalDateTime createdAt;
 
     private boolean isLiked;

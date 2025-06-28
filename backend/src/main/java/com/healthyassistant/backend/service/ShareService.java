@@ -16,10 +16,12 @@ public class ShareService {
 
     private final ShareRepository shareRepository;
     private final UserService userService;
+    private final CommentService commentService;
 
-    public ShareService(ShareRepository shareRepository, UserService userService) {
+    public ShareService(ShareRepository shareRepository, UserService userService, CommentService commentService) {
         this.shareRepository = shareRepository;
         this.userService = userService;
+        this.commentService = commentService;
     }
 
     @Transactional
@@ -42,12 +44,27 @@ public class ShareService {
             dto.setLikes(share.getLikes());
             dto.setViews(share.getViews());
             dto.setCreatedAt(share.getCreatedAt());
+            dto.setComments(commentService.getCommentCountByShareId(share.getId()).intValue());
             return dto;
         }).collect(Collectors.toList());
     }
 
-    public List<Share> searchShares(String keyword) {
-        return shareRepository.searchShares(keyword);
+    public List<ShareDTO> searchShares(String keyword) {
+        List<Share> shares = shareRepository.searchShares(keyword);
+        return shares.stream().map(share -> {
+            ShareDTO dto = new ShareDTO();
+            dto.setId(share.getId());
+            dto.setTitle(share.getTitle());
+            dto.setContent(share.getContent());
+            dto.setAuthorName(share.getAuthor().getUsername());
+            dto.setAuthorAvatar(share.getAuthor().getAvatar());
+            dto.setImages(share.getImages());
+            dto.setLikes(share.getLikes());
+            dto.setViews(share.getViews());
+            dto.setCreatedAt(share.getCreatedAt());
+            dto.setComments(commentService.getCommentCountByShareId(share.getId()).intValue());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     public List<Share> getSharesByUserId(Long userId) {
@@ -99,6 +116,7 @@ public class ShareService {
         dto.setLikes(share.getLikes());
         dto.setViews(share.getViews());
         dto.setCreatedAt(share.getCreatedAt());
+        dto.setComments(commentService.getCommentCountByShareId(share.getId()).intValue());
         return dto;
     }
 }

@@ -28,7 +28,7 @@ public class ShareController {
 
     // 调用方法: http://localhost:8000/api/shares/search?keyword=${keyword}
     @GetMapping("/search")
-    public ResponseEntity<List<Share>> searchShares(
+    public ResponseEntity<List<ShareDTO>> searchShares(
             @RequestParam String keyword) {
         return ResponseEntity.ok(shareService.searchShares(keyword));
     }
