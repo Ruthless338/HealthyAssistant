@@ -2,11 +2,14 @@
 <template>
   <div class="plan-container">
     <!-- 用户信息卡片 -->
-    <div class="user-card">
+    <div class="user-card glass">
       <div class="avatar-section">
-        <img :src="'http://localhost:8000/uploads/'+user.avatar || defaultAvatar" class="user-avatar" />
+        <div class="avatar-wrapper">
+          <img :src="'http://localhost:8000/uploads/'+user.avatar || defaultAvatar" class="user-avatar" />
+          <div class="avatar-ring"></div>
+        </div>
         <div class="user-meta">
-          <h2 class="username">{{ user.username }}的智能运动计划</h2>
+          <h2 class="username gradient-text">{{ user.username }}的智能运动计划</h2>
           <div class="tag-cloud">
             <span 
               v-for="(tag, index) in userTags"
@@ -20,15 +23,19 @@
         </div>
       </div>
       <div class="health-stats">
-        <div class="stat-item">
-          <span class="stat-icon">🏋️</span>
+        <div class="stat-item glass">
+          <div class="stat-icon-wrapper">
+            <span class="stat-icon">🏋️</span>
+          </div>
           <div class="stat-content">
             <div class="stat-value">{{ user.height }}cm / {{ user.weight }}kg</div>
             <div class="stat-title">身体数据</div>
           </div>
         </div>
-        <div class="stat-item">
-          <span class="stat-icon">📊</span>
+        <div class="stat-item glass">
+          <div class="stat-icon-wrapper">
+            <span class="stat-icon">📊</span>
+          </div>
           <div class="stat-content">
             <div class="stat-value">{{ bmi }}</div>
             <div class="stat-title">BMI指数 ({{ bmiStatus }})</div>
@@ -39,9 +46,14 @@
 
     <!-- 加载状态 -->
     <div v-if="loading" class="loading-overlay">
-      <div class="loader">
+      <div class="loader glass">
         <div class="spinner"></div>
         <p class="loading-text">AI教练正在定制您的计划...</p>
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
     </div>
 
@@ -50,13 +62,29 @@
       <div 
         v-for="(day, dayIndex) in exercisePlan.weekPlan"
         :key="dayIndex"
-        class="day-card"
+        class="day-card glass"
       >
         <div class="day-header">
-          <h3 class="day-title">
-            <span class="day-number">第 {{ dayIndex + 1 }} 天</span>
-            <span class="duration">预计时长 {{ calculateDuration(day) }}</span>
-          </h3>
+          <div class="day-info">
+            <h3 class="day-title">
+              <span class="day-number">第 {{ dayIndex + 1 }} 天</span>
+              <span class="day-badge">Day {{ dayIndex + 1 }}</span>
+            </h3>
+            <div class="duration-info">
+              <span class="duration-icon">⏱️</span>
+              <span class="duration">预计时长 {{ calculateDuration(day) }}</span>
+            </div>
+          </div>
+          <div class="day-progress">
+            <div class="progress-ring">
+              <svg width="60" height="60">
+                <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
+                <circle cx="30" cy="30" r="25" fill="none" stroke="var(--primary-color)" stroke-width="4" 
+                        stroke-dasharray="157" stroke-dashoffset="157" stroke-linecap="round"/>
+              </svg>
+              <span class="progress-text">0%</span>
+            </div>
+          </div>
         </div>
         
         <div class="exercise-grid">
@@ -76,15 +104,18 @@
                     class="exercise-image"
                     @error="handleImageError"
                   />
-                  <div class="hover-overlay">
-                    <button class="demo-button" @click="showVideoDemo(exercise)">
-                      <i class="icon-play"></i>
-                      <span>动作示范</span>
-                    </button>
+                  <div class="image-overlay">
+                    <div class="overlay-content">
+                      <button class="demo-button" @click="showVideoDemo(exercise)">
+                        <span class="play-icon">▶️</span>
+                        <span>动作示范</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="exercise-badge">
                   <span class="badge difficulty" :class="difficultyClass(exercise.difficulty)">
+                    <span class="badge-icon">⚡</span>
                     难度：{{ difficultyText(exercise.difficulty) }}
                   </span>
                 </div>
@@ -96,7 +127,7 @@
                 
                 <div class="specs">
                   <div class="spec-item">
-                    <i class="icon-repeats">🔄</i>
+                    <div class="spec-icon">🔄</div>
                     <div class="spec-content">
                       <span class="value">{{ exercise.sets }} 组 × {{ exercise.reps }} 次</span>
                       <span class="label">组间休息 {{ exercise.interval }}</span>
@@ -104,7 +135,7 @@
                   </div>
                   
                   <div class="spec-item">
-                    <i class="icon-target">🎯</i>
+                    <div class="spec-icon">🎯</div>
                     <div class="spec-content">
                       <span class="value">{{ exercise.targetArea?.join(' / ') || '全身' }}</span>
                       <span class="label">主要训练部位</span>
@@ -114,7 +145,7 @@
 
                 <div class="exercise-desc">
                   <div class="desc-header">
-                    <i class="icon-info">ℹ️</i>
+                    <span class="desc-icon">ℹ️</span>
                     <span>动作要点</span>
                   </div>
                   <p class="desc-content">{{ exercise.description || defaultTips }}</p>
@@ -122,10 +153,13 @@
 
                 <div class="action-bar">
                   <button class="action-btn reminder" @click="setReminder(exercise)">
-                    <i class="icon-alarm">⏰</i>训练提醒
+                    <span class="btn-icon">⏰</span>
+                    训练提醒
                   </button>
                   <button class="action-btn favorite" @click="toggleFavorite(exercise)">
-                    <i :class="['icon-heart', { filled: exercise.favorited }]">❤️</i>
+                    <span :class="['heart-icon', { filled: exercise.favorited }]">
+                      {{ exercise.favorited ? '❤️' : '🤍' }}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -136,9 +170,15 @@
     </div>
 
     <!-- 错误处理 -->
-    <div v-if="error" class="error-notification">
-      <div class="error-message">{{ error }}</div>
-      <button class="retry-button" @click="fetchExercisePlan">重试</button>
+    <div v-if="error" class="error-notification glass">
+      <div class="error-icon">⚠️</div>
+      <div class="error-content">
+        <div class="error-message">{{ error }}</div>
+        <button class="retry-button" @click="fetchExercisePlan">
+          <span class="retry-icon">🔄</span>
+          重试
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -261,56 +301,102 @@ const toggleFavorite = (exercise) => {
 <style scoped>
 .plan-container {
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 0 auto;
   padding: 0 1rem;
 }
 
 .user-card {
-  background: white;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
+  border-radius: var(--radius-2xl);
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.user-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+  z-index: -1;
 }
 
 .avatar-section {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.avatar-wrapper {
+  position: relative;
 }
 
 .user-avatar {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
+}
+
+.avatar-ring {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .username {
   margin: 0;
-  font-size: 1.5rem;
-  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
 
 .tag-cloud {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: 0.75rem;
 }
 
 .tag {
   padding: 0.5rem 1rem;
-  border-radius: 1rem;
-  font-size: 0.9em;
+  border-radius: var(--radius-xl);
+  font-size: 0.875rem;
   font-weight: 500;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.tag:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .health-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
 }
 
@@ -318,28 +404,47 @@ const toggleFavorite = (exercise) => {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 1rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
 }
 
 .stat-icon {
   font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .stat-content {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
 }
 
 .stat-value {
-  font-weight: 600;
-  color: #2c3e50;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
 }
 
 .stat-title {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .loading-overlay {
@@ -348,20 +453,29 @@ const toggleFavorite = (exercise) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255,255,255,0.9);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 
+.loader {
+  text-align: center;
+  padding: 3rem;
+  border-radius: var(--radius-2xl);
+  min-width: 300px;
+}
+
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #42b983;
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin: 0 auto 1.5rem;
 }
 
 @keyframes spin {
@@ -370,96 +484,234 @@ const toggleFavorite = (exercise) => {
 }
 
 .loading-text {
-  margin-top: 1rem;
-  color: #666;
-  text-align: center;
+  margin: 0 0 1rem;
+  color: var(--text-primary);
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.loading-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  animation: dots 1.4s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes dots {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
 }
 
 .day-card {
-  background: white;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: var(--radius-2xl);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.day-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
 }
 
 .day-header {
-  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.day-info {
+  flex: 1;
 }
 
 .day-title {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin: 0;
-  color: #2c3e50;
+  gap: 1rem;
+  margin: 0 0 0.5rem;
 }
 
-.duration {
-  font-size: 0.9em;
-  color: #666;
+.day-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.day-badge {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.duration-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.duration-icon {
+  font-size: 1rem;
+}
+
+.day-progress {
+  position: relative;
+}
+
+.progress-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-text {
+  position: absolute;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary-color);
 }
 
 .exercise-grid {
   display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
 }
 
 .exercise-card {
-  background: white;
-  border-radius: 1rem;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .exercise-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+.card-inner {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.card-inner.active {
+  box-shadow: var(--shadow-xl);
+  transform: scale(1.02);
 }
 
 .media-wrapper {
   position: relative;
 }
 
-.exercise-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+.image-frame {
+  position: relative;
+  overflow: hidden;
 }
 
-.hover-overlay {
+.exercise-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.exercise-card:hover .exercise-image {
+  transform: scale(1.05);
+}
+
+.image-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease;
 }
 
-.exercise-card:hover .hover-overlay {
+.exercise-card:hover .image-overlay {
   opacity: 1;
 }
 
+.overlay-content {
+  text-align: center;
+}
+
 .demo-button {
-  padding: 0.8rem 1.5rem;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.95);
   border: none;
-  border-radius: 2rem;
+  border-radius: var(--radius-xl);
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 .demo-button:hover {
   background: white;
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.play-icon {
+  font-size: 1.25rem;
+}
+
+.exercise-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.badge {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badge-icon {
+  font-size: 0.875rem;
 }
 
 .content-wrapper {
@@ -467,8 +719,11 @@ const toggleFavorite = (exercise) => {
 }
 
 .exercise-name {
-  margin: 0 0 1rem;
-  color: #2c3e50;
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
 }
 
 .specs {
@@ -481,6 +736,28 @@ const toggleFavorite = (exercise) => {
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+}
+
+.spec-item:hover {
+  background: var(--bg-tertiary);
+  transform: translateX(4px);
+}
+
+.spec-icon {
+  font-size: 1.25rem;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
 }
 
 .spec-content {
@@ -488,65 +765,187 @@ const toggleFavorite = (exercise) => {
 }
 
 .value {
-  font-weight: 500;
-  color: #2c3e50;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 0.25rem;
 }
 
 .label {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
 }
 
 .exercise-desc {
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 0.8rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(59, 130, 246, 0.05));
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--primary-color);
+}
+
+.desc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.desc-icon {
+  font-size: 1rem;
+}
+
+.desc-content {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 .action-bar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
 }
 
 .action-btn {
-  padding: 0.6rem 1.2rem;
+  padding: 0.75rem 1.25rem;
   border: none;
-  border-radius: 2rem;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .reminder {
-  background: #e3f2fd;
-  color: #2196f3;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+}
+
+.reminder:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .favorite {
   background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.75rem;
+}
+
+.favorite:hover {
+  border-color: var(--error-color);
+  color: var(--error-color);
+  transform: scale(1.1);
+}
+
+.heart-icon {
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.heart-icon.filled {
+  color: var(--error-color);
 }
 
 .error-notification {
-  padding: 1.5rem;
-  background: #ffeeee;
-  border-radius: 0.8rem;
-  color: #ff4444;
-  text-align: center;
+  padding: 2rem;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  border-left: 4px solid var(--error-color);
+}
+
+.error-icon {
+  font-size: 2rem;
+}
+
+.error-content {
+  flex: 1;
+}
+
+.error-message {
+  color: var(--error-color);
+  font-weight: 500;
+  margin-bottom: 1rem;
 }
 
 .retry-button {
-  margin-top: 1rem;
-  padding: 0.8rem 1.5rem;
-  background: #42b983;
+  background: var(--error-color);
   color: white;
   border: none;
-  border-radius: 2rem;
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
-.difficulty-1 { color: #4caf50; background: #e8f5e9; }
-.difficulty-2 { color: #ff9800; background: #fff3e0; }
-.difficulty-3 { color: #f44336; background: #ffebee; }
+.retry-button:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.retry-icon {
+  font-size: 1rem;
+}
+
+/* 难度等级样式 */
+.difficulty-1 { 
+  background: rgba(16, 185, 129, 0.1); 
+  color: var(--success-color); 
+}
+.difficulty-2 { 
+  background: rgba(245, 158, 11, 0.1); 
+  color: var(--warning-color); 
+}
+.difficulty-3 { 
+  background: rgba(239, 68, 68, 0.1); 
+  color: var(--error-color); 
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .plan-container {
+    padding: 0 0.5rem;
+  }
+  
+  .user-card {
+    padding: 1.5rem;
+  }
+  
+  .avatar-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .health-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .exercise-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .day-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
 </style>

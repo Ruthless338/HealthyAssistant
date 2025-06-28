@@ -11,6 +11,10 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
+            path: '/',
+            redirect: '/Community'
+        },
+        {
             path:'/Plan',
             name:'Plan',
             component:Plan

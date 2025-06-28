@@ -38,21 +38,5 @@ export default {
 </script>
 
 <style>
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.content-container {
-  margin-top: 60px; /* 与导航栏高度一致 */
-  padding: 20px;
-  flex: 1;
-}
+/* 移除原有样式，使用全局样式 */
 </style>

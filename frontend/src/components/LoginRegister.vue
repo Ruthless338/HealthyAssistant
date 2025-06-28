@@ -1,40 +1,124 @@
 <!-- src/components/LoginRegister.vue -->
 <template>
     <div class="login-register">
-        <div class="contain">
-            <div class="big-box" :class="{active:isLogin}">
-                <div class="big-contain" key="bigContainLogin" v-if="isLogin">
-                    <div class="btitle">账户登录</div>
-                    <div class="bform">
-                        <!--placeholder为占位符 v-model为输入框和form.useremail双向绑定-->
-                        <input type="text" placeholder="用户名" v-model="form.username">
-                        <span class="errTips" v-if="usernameError">* 用户名不存在</span>
-                        <input type="password" placeholder="密码" v-model="form.userpwd">
-                        <span class="errTips" v-if="passwordError">* 密码填写错误</span>
+        <div class="background-decoration">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+        
+        <div class="auth-container glass">
+            <div class="auth-box" :class="{active: isLogin}">
+                <!-- 登录表单 -->
+                <div class="auth-form login-form" v-if="isLogin">
+                    <div class="form-header">
+                        <div class="logo-section">
+                            <div class="logo-icon">💪</div>
+                            <h1 class="form-title gradient-text">欢迎回来</h1>
+                        </div>
+                        <p class="form-subtitle">继续你的健康之旅</p>
                     </div>
-                    <button class="bbutton" @click="login">登录</button>
+                    
+                    <div class="form-content">
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <span class="input-icon">👤</span>
+                                <input 
+                                    type="text" 
+                                    placeholder="用户名" 
+                                    v-model="form.username"
+                                    class="form-input"
+                                >
+                            </div>
+                            <span class="error-tip" v-if="usernameError">用户名不存在</span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <span class="input-icon">🔒</span>
+                                <input 
+                                    type="password" 
+                                    placeholder="密码" 
+                                    v-model="form.userpwd"
+                                    class="form-input"
+                                >
+                            </div>
+                            <span class="error-tip" v-if="passwordError">密码填写错误</span>
+                        </div>
+                        
+                        <button class="submit-btn" @click="login">
+                            <span class="btn-text">登录</span>
+                            <span class="btn-icon">→</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="big-contain" key="igContainRegister" v-else>
-                    <div class="btitle">创建账户</div>
-                    <div class="bform">
-                        <input type="text" placeholder="用户名" v-model="form.username">
-                        <span class="errTips" v-if="existed">* 用户名已经存在</span>
-                        <!-- <input type="email" placeholder="邮箱" v-model="form.useremail"> -->
-                        <input type="password" placeholder="密码" v-model="form.userpwd">
+                
+                <!-- 注册表单 -->
+                <div class="auth-form register-form" v-else>
+                    <div class="form-header">
+                        <div class="logo-section">
+                            <div class="logo-icon">🚀</div>
+                            <h1 class="form-title gradient-text">开始旅程</h1>
+                        </div>
+                        <p class="form-subtitle">创建你的健康账户</p>
                     </div>
-                    <button class="bbutton" @click="register">注册</button>
+                    
+                    <div class="form-content">
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <span class="input-icon">👤</span>
+                                <input 
+                                    type="text" 
+                                    placeholder="用户名" 
+                                    v-model="form.username"
+                                    class="form-input"
+                                >
+                            </div>
+                            <span class="error-tip" v-if="existed">用户名已经存在</span>
+                        </div>
+                        
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <span class="input-icon">🔒</span>
+                                <input 
+                                    type="password" 
+                                    placeholder="密码" 
+                                    v-model="form.userpwd"
+                                    class="form-input"
+                                >
+                            </div>
+                        </div>
+                        
+                        <button class="submit-btn" @click="register">
+                            <span class="btn-text">注册</span>
+                            <span class="btn-icon">→</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="small-box" :class="{active:isLogin}">
-                <div class="small-contain" key="smallContainRegister" v-if="isLogin">
-                    <div class="stitle">你好，朋友！</div>
-                    <p class="scontent">开始注册，和我们一起旅行</p>
-                    <button class="sbutton" @click="changeType">注册</button>
+            
+            <!-- 切换面板 -->
+            <div class="switch-panel" :class="{active: isLogin}">
+                <div class="switch-content" v-if="isLogin">
+                    <div class="switch-header">
+                        <h2 class="switch-title">你好，朋友！</h2>
+                        <p class="switch-subtitle">还没有账户？立即注册开始你的健康之旅</p>
+                    </div>
+                    <button class="switch-btn" @click="changeType">
+                        <span class="switch-icon">📝</span>
+                        <span class="switch-text">注册账户</span>
+                    </button>
                 </div>
-                <div class="small-contain" key="smallContainLogin" v-else>
-                    <div class="stitle">欢迎回来！</div>
-                    <p class="scontent">与我们保持联系，请登录你的账户</p>
-                    <button class="sbutton" @click="changeType">登录</button>
+                
+                <div class="switch-content" v-else>
+                    <div class="switch-header">
+                        <h2 class="switch-title">欢迎回来！</h2>
+                        <p class="switch-subtitle">已有账户？登录继续你的健康计划</p>
+                    </div>
+                    <button class="switch-btn" @click="changeType">
+                        <span class="switch-icon">🔑</span>
+                        <span class="switch-text">登录账户</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -54,10 +138,10 @@ export default {
 	},
     data () {
         return {
-            isLogin:false,
-            emailError:false,
-            passwordError:false,
-            existed:false,
+            isLogin: false,
+            emailError: false,
+            passwordError: false,
+            existed: false,
             form: {
                 username: '',
                 useremail: '',
@@ -71,6 +155,10 @@ export default {
             this.form.username = '';
             this.form.useremail = '';
             this.form.userpwd = '';
+            // 清除错误状态
+            this.usernameError = false;
+            this.passwordError = false;
+            this.existed = false;
         },
         login() {
 			const self = this;
@@ -155,142 +243,338 @@ export default {
 }
 </script>
 
+<style scoped>
+.login-register {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+}
 
-<style scoped="scoped">
-	.login-register{
-		width: 100vw;
-		height: 100vh;
-		box-sizing: border-box;
-		position: fixed;
-		top:0;
-		left:0;
-	}
-	.contain{
-		width: 60%;
-		height: 60%;
-		position: relative;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%,-50%);
-		background-color: #fff;
-		border-radius: 20px;
-		box-shadow: 0 0 3px #f0f0f0,
-					0 0 6px #f0f0f0;
-	}
-	.big-box{
-		width: 70%;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		left: 30%;
-		transform: translateX(0%);
-		transition: all 1s;
-	}
-	.big-contain{
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-	.btitle{
-		font-size: 1.5em;
-		font-weight: bold;
-		color: rgb(57,167,176);
-	}
-	.bform{
-		width: 100%;
-		height: 40%;
-		padding: 2em 0;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-around;
-		align-items: center;
-	}
-	.bform .errTips{
-		display: block;
-		width: 50%;
-		text-align: left;
-		color: red;
-		font-size: 0.7em;
-		margin-left: 1em;
-	}
-	.bform input{
-		width: 50%;
-		height: 30px;
-		border: none;
-		outline: none;
-		border-radius: 10px;
-		padding-left: 2em;
-		background-color: #f0f0f0;
-	}
-	.bbutton{
-		width: 20%;
-		height: 40px;
-		border-radius: 24px;
-		border: none;
-		outline: none;
-		background-color: rgb(57,167,176);
-		color: #fff;
-		font-size: 0.9em;
-		cursor: pointer;
-	}
-	.small-box{
-		width: 30%;
-		height: 100%;
-		background: linear-gradient(135deg,rgb(57,167,176),rgb(56,183,145));
-		position: absolute;
-		top: 0;
-		left: 0;
-		transform: translateX(0%);
-		transition: all 1s;
-		border-top-left-radius: inherit;
-		border-bottom-left-radius: inherit;
-	}
-	.small-contain{
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-	.stitle{
-		font-size: 1.5em;
-		font-weight: bold;
-		color: #fff;
-	}
-	.scontent{
-		font-size: 0.8em;
-		color: #fff;
-		text-align: center;
-		padding: 2em 4em;
-		line-height: 1.7em;
-	}
-	.sbutton{
-		width: 60%;
-		height: 40px;
-		border-radius: 24px;
-		border: 1px solid #fff;
-		outline: none;
-		background-color: transparent;
-		color: #fff;
-		font-size: 0.9em;
-		cursor: pointer;
-	}
-	
-	.big-box.active{
-		left: 0;
-		transition: all 0.5s;
-	}
-	.small-box.active{
-		left: 100%;
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-		border-top-right-radius: inherit;
-		border-bottom-right-radius: inherit;
-		transform: translateX(-100%);
-		transition: all 1s;
-	}
+.background-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 100px;
+    height: 100px;
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 4s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.auth-container {
+    width: 900px;
+    height: 600px;
+    border-radius: var(--radius-2xl);
+    display: flex;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    z-index: 1;
+}
+
+.auth-box {
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.auth-form {
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.025em;
+}
+
+.form-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    z-index: 1;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    background: var(--bg-primary);
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.error-tip {
+    color: var(--error-color);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding-left: 0.5rem;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+}
+
+.btn-icon {
+    font-size: 1.125rem;
+    transition: transform 0.3s ease;
+}
+
+.submit-btn:hover .btn-icon {
+    transform: translateX(4px);
+}
+
+.switch-panel {
+    width: 400px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.switch-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.switch-content {
+    text-align: center;
+    color: white;
+    position: relative;
+    z-index: 1;
+}
+
+.switch-header {
+    margin-bottom: 2rem;
+}
+
+.switch-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.switch-subtitle {
+    font-size: 1rem;
+    margin: 0;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.switch-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 2rem;
+    border-radius: var(--radius-xl);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.switch-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.switch-icon {
+    font-size: 1.125rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .auth-container {
+        width: 90%;
+        height: auto;
+        min-height: 500px;
+        flex-direction: column;
+    }
+    
+    .auth-box {
+        padding: 2rem 1.5rem;
+    }
+    
+    .switch-panel {
+        width: 100%;
+        padding: 2rem 1.5rem;
+    }
+    
+    .form-title {
+        font-size: 1.75rem;
+    }
+    
+    .switch-title {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .auth-box {
+        padding: 1.5rem 1rem;
+    }
+    
+    .switch-panel {
+        padding: 1.5rem 1rem;
+    }
+    
+    .logo-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .form-title {
+        font-size: 1.5rem;
+    }
+    
+    .switch-title {
+        font-size: 1.5rem;
+    }
+}
 </style>
