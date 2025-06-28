@@ -1,61 +1,71 @@
 <!-- src/views/Selector.vue -->
 <template>
-    <div class="container">
+  <div class="selector-container">
+    <div class="form-wrapper glass">
+      <div class="form-header">
+        <h1 class="form-title gradient-text">🏋️‍♀️ 运动Selector</h1>
+        <p class="form-subtitle">完善你的个人档案，获得个性化运动计划</p>
+      </div>
+      
       <form @submit.prevent="submitForm" class="user-form">
-        <h1>🏋️‍♀️ 健身Selector</h1>
-        <!-- 新增头像上传区域 -->
+        <!-- 头像上传区域 -->
         <div class="form-section">
-          <h2>📸 头像设置</h2>
+          <h2 class="section-title">📸 头像设置</h2>
           <div class="avatar-uploader">
             <ImageUpload @uploaded="handleAvatarUpload" />
             <p class="upload-tip">支持JPG/PNG格式，大小不超过5MB</p>
           </div>
         </div>
+        
         <!-- 基本信息区 -->
         <div class="form-section">
-          <h2>👤 基本信息</h2>
+          <h2 class="section-title">👤 基本信息</h2>
           <div class="grid-group">
             <div class="input-group">
-              <label>性别</label>
+              <label class="input-label">性别</label>
               <div class="gender-select">
                 <button 
                   v-for="opt in genderOptions" 
                   :key="opt.value"
-                  :class="{ active: form.gender === opt.value }"
+                  :class="['gender-btn', { active: form.gender === opt.value }]"
                   @click.prevent="form.gender = opt.value"
                 >
+                  <span class="gender-icon">{{ opt.value === 'male' ? '👨' : '👩' }}</span>
                   {{ opt.label }}
                 </button>
               </div>
             </div>
             <div class="input-group">
-              <label>年龄</label>
+              <label class="input-label">年龄</label>
               <input 
                 v-model.number="form.age" 
                 type="number" 
                 min="10" 
                 max="100"
                 placeholder="请输入年龄"
+                class="form-input"
               >
             </div>
             <div class="input-group">
-              <label>身高 (cm)</label>
+              <label class="input-label">身高 (cm)</label>
               <input
                 v-model.number="form.height"
                 type="number"
                 min="100"
                 max="250"
                 placeholder="请输入身高"
+                class="form-input"
               >
             </div>
             <div class="input-group">
-              <label>体重 (kg)</label>
+              <label class="input-label">体重 (kg)</label>
               <input
                 v-model.number="form.weight"
                 type="number"
                 min="30"
                 max="200"
                 placeholder="请输入体重"
+                class="form-input"
               >
             </div>
           </div>
@@ -63,7 +73,7 @@
   
         <!-- 多选卡片区 -->
         <div class="form-section">
-          <h2>🎯 健身目标</h2>
+          <h2 class="section-title">🎯 健身目标</h2>
           <div class="card-grid">
             <div 
               v-for="goal in goalOptions"
@@ -72,13 +82,14 @@
               :class="{ selected: form.goal.includes(goal) }"
               @click="toggleSelection('goal', goal)"
             >
-              {{ goal }}
+              <span class="card-icon">🎯</span>
+              <span class="card-text">{{ goal }}</span>
             </div>
           </div>
         </div>
   
         <div class="form-section">
-          <h2>❤️ 运动兴趣</h2>
+          <h2 class="section-title">❤️ 运动兴趣</h2>
           <div class="card-grid">
             <div
               v-for="interest in interestOptions"
@@ -87,13 +98,14 @@
               :class="{ selected: form.interest.includes(interest) }"
               @click="toggleSelection('interest', interest)"
             >
-              {{ interest }}
+              <span class="card-icon">⚡</span>
+              <span class="card-text">{{ interest }}</span>
             </div>
           </div>
         </div>
   
         <div class="form-section">
-          <h2>💪 重点锻炼部位</h2>
+          <h2 class="section-title">💪 重点锻炼部位</h2>
           <div class="card-grid">
             <div
               v-for="part in partOptions"
@@ -102,23 +114,33 @@
               :class="{ selected: form.part.includes(part) }"
               @click="toggleSelection('part', part)"
             >
-              {{ part }}
+              <span class="card-icon">💪</span>
+              <span class="card-text">{{ part }}</span>
             </div>
           </div>
         </div>
   
         <!-- 提交按钮 -->
-        <button 
-          type="submit" 
-          class="submit-btn"
-          :disabled="isSubmitting"
-        >
-          <span v-if="!isSubmitting">🚀 完成注册</span>
-          <span v-else>提交中...</span>
-        </button>
+        <div class="submit-section">
+          <button 
+            type="submit" 
+            class="submit-btn"
+            :disabled="isSubmitting"
+          >
+            <span v-if="!isSubmitting" class="btn-content">
+              <span class="btn-icon">🚀</span>
+              提交
+            </span>
+            <span v-else class="btn-content">
+              <span class="loading-spinner"></span>
+              提交中...
+            </span>
+          </button>
+        </div>
       </form>
     </div>
-  </template>
+  </div>
+</template>
   
 <script>
 import { ref, reactive } from 'vue';
@@ -225,146 +247,328 @@ export default {
 }
 </script>
   
-  <style scoped>
-  .container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+<style scoped>
+.selector-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  min-height: 100vh;
+}
+
+.form-wrapper {
+  background: var(--bg-primary);
+  border-radius: var(--radius-2xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.form-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section-title {
+  color: var(--text-primary);
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--primary-color);
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.grid-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  font-size: 1rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.gender-select {
+  display: flex;
+  gap: 1rem;
+}
+
+.gender-btn {
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.gender-btn:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.gender-btn.active {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+}
+
+.gender-icon {
+  font-size: 1.25rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.selection-card {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border: 2px solid transparent;
+  border-radius: var(--radius-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 120px;
+  justify-content: center;
+}
+
+.selection-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
+}
+
+.selection-card.selected {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.card-icon {
+  font-size: 2rem;
+}
+
+.card-text {
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.avatar-uploader {
+  text-align: center;
+  padding: 2rem;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-xl);
+  background: var(--bg-secondary);
+  transition: all 0.3s ease;
+}
+
+.avatar-uploader:hover {
+  border-color: var(--primary-color);
+  background: var(--bg-tertiary);
+}
+
+.upload-tip {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
+
+.submit-section {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.submit-btn {
+  width: 100%;
+  max-width: 400px;
+  padding: 1.25rem 2rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: var(--radius-xl);
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.btn-icon {
+  font-size: 1.25rem;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .selector-container {
+    padding: 1rem;
+    margin: 1rem auto;
   }
   
-  .user-form {
-    background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  .form-wrapper {
+    padding: 1.5rem;
   }
   
-  .form-section {
-    margin-bottom: 3rem;
-  }
-  
-  h2 {
-    color: #2c3e50;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #4A90E2;
-    display: inline-block;
+  .form-title {
+    font-size: 2rem;
   }
   
   .grid-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .input-group {
-    margin-bottom: 1rem;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #666;
-    font-weight: 500;
-  }
-  
-  input {
-    width: 100%;
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    transition: border-color 0.3s;
-  }
-  
-  input:focus {
-    outline: none;
-    border-color: #4A90E2;
-    box-shadow: 0 0 0 2px rgba(74,144,226,0.2);
-  }
-  
-  .gender-select {
-    display: flex;
-    gap: 1rem;
-  }
-  
-  .gender-select button {
-    flex: 1;
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #f8f9fa;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .gender-select button.active {
-    background: #4A90E2;
-    color: white;
-    border-color: #4A90E2;
+    grid-template-columns: 1fr;
   }
   
   .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .gender-select {
+    flex-direction: column;
   }
   
   .selection-card {
-    padding: 1.2rem;
-    background: #f8f9fa;
-    border: 2px solid transparent;
-    border-radius: 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
+    min-height: 100px;
+    padding: 1rem;
   }
   
-  .selection-card:hover {
-    transform: translateY(-3px);
+  .card-icon {
+    font-size: 1.5rem;
   }
   
-  .selection-card.selected {
-    background: #4A90E2;
-    color: white;
-    border-color: #357ABD;
-    box-shadow: 0 4px 6px rgba(74,144,226,0.2);
+  .card-text {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-wrapper {
+    padding: 1rem;
+  }
+  
+  .form-title {
+    font-size: 1.75rem;
+  }
+  
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .selection-card {
+    min-height: 80px;
+    padding: 0.75rem;
   }
   
   .submit-btn {
-    width: 100%;
-    padding: 1.2rem;
-    background: #4A90E2;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
   }
-  
-  .submit-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
-  @media (max-width: 768px) {
-    .container {
-      padding: 1rem;
-    }
-    
-    .card-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .avatar-uploader {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .upload-tip {
-    color: #666;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-  }
-  </style>
+}
+</style>
