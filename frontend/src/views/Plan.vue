@@ -106,7 +106,7 @@
                   />
                   <div class="image-overlay">
                     <div class="overlay-content">
-                      <button class="demo-button" @click="showVideoDemo(exercise)">
+                      <button class="demo-button" @click="showVideoDemo(exercise, dayIndex, exIndex)">
                         <span class="play-icon">▶️</span>
                         <span>动作示范</span>
                       </button>
@@ -169,6 +169,17 @@
       </div>
     </div>
 
+    <!-- 视频播放器组件 -->
+    <VideoPlayer
+      :show="showVideoModal"
+      :exercise-name="currentVideoExercise?.name"
+      :exercise-description="currentVideoExercise?.description"
+      :user-id="user.id"
+      :day-index="currentDayIndex"
+      :exercise-index="currentExerciseIndex"
+      @close="closeVideoModal"
+    />
+
     <!-- 错误处理 -->
     <div v-if="error" class="error-notification glass">
       <div class="error-icon">⚠️</div>
@@ -187,6 +198,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import axios from 'axios'
+import VideoPlayer from '../components/VideoPlayer.vue'
 
 const store = useStore()
 const user = computed(() => store.state.user)
@@ -198,6 +210,12 @@ const loading = ref(false)
 const activeExercise = ref(null)
 const defaultTips = ref('保持核心收紧，注意呼吸节奏')
 const defaultExerciseImage = 'https://pic1.imgdb.cn/item/68161c4e58cb8da5c8d9ea4f.png'
+
+// 视频相关状态
+const showVideoModal = ref(false)
+const currentVideoExercise = ref(null)
+const currentDayIndex = ref(-1)
+const currentExerciseIndex = ref(-1)
 
 // 计算属性
 const userTags = computed(() => [
@@ -238,9 +256,8 @@ const fetchExercisePlan = async () => {
       exercisePlan.value = processPlan(user.value.currentPlan)
       return ;
     }
-    const response = await axios.post('http://localhost:8000/api/plan/generate', {
-       id: user.value.id 
-    });
+    console.log(user.value)
+    const response = await axios.post(`http://localhost:8000/api/plan/generate?id=${user.value.id}`);
     exercisePlan.value = processPlan(response.data);
     store.commit('updateUserPlan', response.data);
   } catch (err) {
@@ -285,8 +302,19 @@ const handleImageError = (event) => {
   event.target.src = defaultExerciseImage
 }
 
-const showVideoDemo = (exercise) => {
-  console.log('展示动作示范：', exercise.name)
+// 视频相关方法
+const showVideoDemo = (exercise, dayIndex, exerciseIndex) => {
+  currentVideoExercise.value = exercise
+  currentDayIndex.value = dayIndex
+  currentExerciseIndex.value = exerciseIndex
+  showVideoModal.value = true
+}
+
+const closeVideoModal = () => {
+  showVideoModal.value = false
+  currentVideoExercise.value = null
+  currentDayIndex.value = -1
+  currentExerciseIndex.value = -1
 }
 
 const setReminder = (exercise) => {
@@ -855,6 +883,167 @@ const toggleFavorite = (exercise) => {
   color: var(--error-color);
 }
 
+/* 视频弹窗样式 */
+.video-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.video-modal {
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  position: relative;
+}
+
+.video-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.video-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+}
+
+.close-button:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.video-content {
+  padding: 2rem;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-processing {
+  text-align: center;
+  padding: 2rem;
+}
+
+.processing-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+
+.processing-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.processing-subtext {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.refresh-button {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin: 0 auto;
+}
+
+.refresh-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.video-player {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.exercise-video {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.video-error {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.error-text {
+  font-size: 1.125rem;
+  color: var(--error-color);
+  margin-bottom: 2rem;
+}
+
+.retry-button {
+  background: var(--error-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin: 0 auto;
+}
+
+.retry-button:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
 .error-notification {
   padding: 2rem;
   border-radius: var(--radius-xl);
@@ -877,26 +1066,6 @@ const toggleFavorite = (exercise) => {
   color: var(--error-color);
   font-weight: 500;
   margin-bottom: 1rem;
-}
-
-.retry-button {
-  background: var(--error-color);
-  color: white;
-  border: none;
-  border-radius: var(--radius-lg);
-  padding: 0.75rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.retry-button:hover {
-  background: #dc2626;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
 }
 
 .retry-icon {
@@ -946,6 +1115,19 @@ const toggleFavorite = (exercise) => {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+  }
+  
+  .video-modal {
+    margin: 1rem;
+    max-height: 80vh;
+  }
+  
+  .video-modal-header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .video-content {
+    padding: 1rem;
   }
 }
 </style>
