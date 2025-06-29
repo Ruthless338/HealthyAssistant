@@ -26,6 +26,86 @@
             required
           ></textarea>
         </div>
+
+        <!-- 新增：运动类型选择 -->
+        <div class="input-group">
+          <label class="input-label">运动类型</label>
+          <select v-model="form.sportType" class="form-select">
+            <option value="">请选择运动类型</option>
+            <option value="跑步">跑步</option>
+            <option value="健身">健身</option>
+            <option value="瑜伽">瑜伽</option>
+            <option value="游泳">游泳</option>
+            <option value="骑行">骑行</option>
+            <option value="跳绳">跳绳</option>
+            <option value="跳舞">跳舞</option>
+            <option value="拳击">拳击</option>
+            <option value="徒手训练">徒手训练</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+
+        <!-- 新增：难度等级选择 -->
+        <div class="input-group">
+          <label class="input-label">难度等级</label>
+          <select v-model="form.difficultyLevel" class="form-select">
+            <option value="">请选择难度等级</option>
+            <option value="初级">初级</option>
+            <option value="中级">中级</option>
+            <option value="高级">高级</option>
+          </select>
+        </div>
+
+        <!-- 新增：适用人群选择 -->
+        <div class="input-group">
+          <label class="input-label">适用人群</label>
+          <select v-model="form.targetAudience" class="form-select">
+            <option value="">请选择适用人群</option>
+            <option value="全身减脂减重">全身减脂减重</option>
+            <option value="局部变瘦更紧致">局部变瘦更紧致</option>
+            <option value="增肌塑形提升线条">增肌塑形提升线条</option>
+            <option value="提升运动能力/成绩">提升运动能力/成绩</option>
+            <option value="保持健康">保持健康</option>
+            <option value="康复/疼痛缓解">康复/疼痛缓解</option>
+          </select>
+        </div>
+
+        <!-- 新增：标签输入 -->
+        <div class="input-group">
+          <label class="input-label">标签</label>
+          <div class="tags-input-container">
+            <div class="tags-display">
+              <span 
+                v-for="(tag, index) in form.tags" 
+                :key="index" 
+                class="tag-item"
+              >
+                {{ tag }}
+                <button @click="removeTag(index)" class="remove-tag">×</button>
+              </span>
+            </div>
+            <div class="tag-input-wrapper">
+              <input 
+                v-model="newTag" 
+                @keyup.enter="addTag"
+                placeholder="输入标签后按回车添加..."
+                class="tag-input"
+              >
+              <button @click="addTag" class="add-tag-btn">添加</button>
+            </div>
+            <div class="tag-suggestions">
+              <span class="suggestion-label">推荐标签：</span>
+              <button 
+                v-for="suggestion in tagSuggestions" 
+                :key="suggestion"
+                @click="addSuggestedTag(suggestion)"
+                class="suggestion-tag"
+              >
+                {{ suggestion }}
+              </button>
+            </div>
+          </div>
+        </div>
         
         <div class="upload-section">
           <label class="input-label">图片</label>
@@ -99,10 +179,20 @@ export default {
       form: {
         title: '',
         content: '',
-        images: []
+        images: [],
+        tags: [],
+        sportType: '',
+        difficultyLevel: '',
+        targetAudience: ''
       },
+      newTag: '',
       isSubmitting: false,
-      hoverIndex: -1
+      hoverIndex: -1,
+      tagSuggestions: [
+        '减脂', '增肌', '塑形', '健康', '康复', '力量训练', 
+        '有氧运动', '拉伸', '核心训练', 'HIIT', '瑜伽', 
+        '跑步技巧', '健身器材', '营养', '休息恢复'
+      ]
     }
   },
   methods: {
@@ -114,6 +204,20 @@ export default {
         this.form.images.splice(index, 1);
       } catch (error) {
         alert('图片删除失败');
+      }
+    },
+    addTag() {
+      if (this.newTag.trim() && !this.form.tags.includes(this.newTag.trim())) {
+        this.form.tags.push(this.newTag.trim());
+        this.newTag = '';
+      }
+    },
+    removeTag(index) {
+      this.form.tags.splice(index, 1);
+    },
+    addSuggestedTag(tag) {
+      if (!this.form.tags.includes(tag)) {
+        this.form.tags.push(tag);
       }
     },
     async submit() {
@@ -135,7 +239,16 @@ export default {
       }
     },
     close() {
-      this.form = { title: '', content: '', images: [] };
+      this.form = { 
+        title: '', 
+        content: '', 
+        images: [], 
+        tags: [], 
+        sportType: '', 
+        difficultyLevel: '', 
+        targetAudience: '' 
+      };
+      this.newTag = '';
       this.$emit('close');
     }
   }
@@ -213,7 +326,7 @@ export default {
   margin-bottom: 0.25rem;
 }
 
-.form-input, .form-textarea {
+.form-input, .form-textarea, .form-select {
   width: 100%;
   padding: 1rem;
   border: 1px solid var(--border-color);
@@ -225,7 +338,7 @@ export default {
   box-sizing: border-box;
 }
 
-.form-input:focus, .form-textarea:focus {
+.form-input:focus, .form-textarea:focus, .form-select:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
@@ -235,6 +348,120 @@ export default {
   resize: vertical;
   min-height: 120px;
   font-family: inherit;
+}
+
+/* 标签输入样式 */
+.tags-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+}
+
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.remove-tag:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.tag-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tag-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.add-tag-btn {
+  padding: 0.75rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-tag-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.tag-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.suggestion-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.suggestion-tag {
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.suggestion-tag:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 .upload-section {
@@ -421,6 +648,14 @@ export default {
   
   .preview-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .tag-input-wrapper {
+    flex-direction: column;
+  }
+  
+  .add-tag-btn {
+    width: 100%;
   }
 }
 

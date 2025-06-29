@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Plan from './views/Plan.vue';
 import Record from './views/Record.vue';
-import Diet from './views/Diet.vue';
 import Community from './views/Community.vue';
 import LoginRegister from './components/LoginRegister.vue';
 import Selector from './views/Selector.vue';
 import UserProfile from './views/UserProfile.vue';
+import Recommendations from './views/Recommendations.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -23,11 +23,6 @@ const router = createRouter({
             path:'/Record',
             name:'Record',
             component:Record
-        },
-        {
-            path:'/Diet',
-            name:'Diet',
-            component:Diet
         },
         {
             path:'/Community',
@@ -48,6 +43,11 @@ const router = createRouter({
             path:'/UserProfile',
             name:'UserProfile',
             component:UserProfile
+        },
+        {
+            path: '/Recommendations',
+            name: 'Recommendations',
+            component: Recommendations
         }
     ]
 })

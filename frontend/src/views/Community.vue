@@ -6,6 +6,50 @@
       <p class="page-subtitle">分享你的运动心得，与志同道合的朋友交流</p>
     </div>
 
+    <!-- 推荐系统说明 -->
+    <div class="recommendation-info glass">
+      <div class="info-header">
+        <span class="info-icon">🎯</span>
+        <h3 class="info-title">个性化推荐</h3>
+        <button @click="showRecommendationInfo = !showRecommendationInfo" class="info-toggle">
+          <span class="toggle-icon">{{ showRecommendationInfo ? '▼' : '▶' }}</span>
+        </button>
+      </div>
+      <div v-if="showRecommendationInfo" class="info-content">
+        <p class="info-text">
+          我们的推荐系统基于您的个人特征和偏好，为您精选最相关的运动分享内容。
+        </p>
+        <div class="recommendation-factors">
+          <div class="factor-item">
+            <span class="factor-icon">🏃‍♂️</span>
+            <span class="factor-text">运动兴趣匹配</span>
+          </div>
+          <div class="factor-item">
+            <span class="factor-icon">📊</span>
+            <span class="factor-text">难度等级适配</span>
+          </div>
+          <div class="factor-item">
+            <span class="factor-icon">🏷️</span>
+            <span class="factor-text">标签相似度</span>
+          </div>
+          <div class="factor-item">
+            <span class="factor-icon">🎯</span>
+            <span class="factor-text">健身目标匹配</span>
+          </div>
+          <div class="factor-item">
+            <span class="factor-icon">👥</span>
+            <span class="factor-text">相似用户偏好</span>
+          </div>
+        </div>
+        <div class="info-actions">
+          <router-link to="/Recommendations" class="recommendation-link">
+            <span class="link-icon">🎯</span>
+            查看个性化推荐
+          </router-link>
+        </div>
+      </div>
+    </div>
+
     <!-- 搜索栏 -->
     <div class="search-section glass">
       <div class="search-bar">
@@ -216,7 +260,8 @@ export default {
       searchKeyword: '',
       loading: true,
       showShareForm: false,
-      selectedShareId: null
+      selectedShareId: null,
+      showRecommendationInfo: false
     }
   },
   computed: {
@@ -455,6 +500,98 @@ export default {
   color: var(--text-secondary);
   margin: 0;
   font-weight: 400;
+}
+
+.recommendation-info {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.info-icon {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.info-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.info-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.toggle-icon {
+  font-size: 1.5rem;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.info-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.recommendation-factors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.factor-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.factor-icon {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.factor-text {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.info-actions {
+  text-align: right;
+}
+
+.recommendation-link {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.recommendation-link:hover {
+  color: var(--primary-dark);
+}
+
+.link-icon {
+  font-size: 1.25rem;
 }
 
 .search-section {
