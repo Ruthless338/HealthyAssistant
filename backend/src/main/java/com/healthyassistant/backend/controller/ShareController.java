@@ -51,6 +51,14 @@ public class ShareController {
         return ResponseEntity.ok(shareService.getAllShares());
     }
 
+    // 新增：获取推荐分享
+    @GetMapping("/recommended")
+    public ResponseEntity<List<ShareDTO>> getRecommendedShares(
+            @RequestParam Long userId,
+            @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(shareService.getRecommendedShares(userId, limit));
+    }
+
     // 这里的id是分享类的id
     @GetMapping("/{id}/view")
     public ResponseEntity<Void> viewShare(@PathVariable Long id) {

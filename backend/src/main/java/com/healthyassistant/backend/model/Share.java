@@ -29,6 +29,20 @@ public class Share {
     @CollectionTable(name = "share_images", joinColumns = @JoinColumn(name = "share_id"))
     private List<String> images = new ArrayList<>();
 
+    // 新增：分享标签，用于推荐算法
+    @ElementCollection
+    @CollectionTable(name = "share_tags", joinColumns = @JoinColumn(name = "share_id"))
+    private List<String> tags = new ArrayList<>();
+
+    // 新增：分享类型（运动类型）
+    private String sportType; // 跑步、健身、瑜伽、游泳等
+
+    // 新增：难度等级
+    private String difficultyLevel; // 初级、中级、高级
+
+    // 新增：适用人群
+    private String targetAudience; // 减脂、增肌、康复、保持健康等
+
     private Integer likes = 0;
     private Integer views = 0;
 

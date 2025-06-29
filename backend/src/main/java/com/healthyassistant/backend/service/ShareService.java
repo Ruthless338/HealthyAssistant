@@ -17,11 +17,14 @@ public class ShareService {
     private final ShareRepository shareRepository;
     private final UserService userService;
     private final CommentService commentService;
+    private final RecommendationService recommendationService;
 
-    public ShareService(ShareRepository shareRepository, UserService userService, CommentService commentService) {
+    public ShareService(ShareRepository shareRepository, UserService userService,
+            CommentService commentService, RecommendationService recommendationService) {
         this.shareRepository = shareRepository;
         this.userService = userService;
         this.commentService = commentService;
+        this.recommendationService = recommendationService;
     }
 
     @Transactional
@@ -33,38 +36,13 @@ public class ShareService {
 
     public List<ShareDTO> getAllShares() {
         List<Share> shares = shareRepository.findAllByOrderByCreatedAtDesc();
-        return shares.stream().map(share -> {
-            ShareDTO dto = new ShareDTO();
-            dto.setId(share.getId());
-            dto.setTitle(share.getTitle());
-            dto.setContent(share.getContent());
-            dto.setAuthorName(share.getAuthor().getUsername());
-            dto.setAuthorAvatar(share.getAuthor().getAvatar());
-            dto.setImages(share.getImages());
-            dto.setLikes(share.getLikes());
-            dto.setViews(share.getViews());
-            dto.setCreatedAt(share.getCreatedAt());
-            dto.setComments(commentService.getCommentCountByShareId(share.getId()).intValue());
-            return dto;
-        }).collect(Collectors.toList());
+        // System.out.println(shares);
+        return shares.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public List<ShareDTO> searchShares(String keyword) {
         List<Share> shares = shareRepository.searchShares(keyword);
-        return shares.stream().map(share -> {
-            ShareDTO dto = new ShareDTO();
-            dto.setId(share.getId());
-            dto.setTitle(share.getTitle());
-            dto.setContent(share.getContent());
-            dto.setAuthorName(share.getAuthor().getUsername());
-            dto.setAuthorAvatar(share.getAuthor().getAvatar());
-            dto.setImages(share.getImages());
-            dto.setLikes(share.getLikes());
-            dto.setViews(share.getViews());
-            dto.setCreatedAt(share.getCreatedAt());
-            dto.setComments(commentService.getCommentCountByShareId(share.getId()).intValue());
-            return dto;
-        }).collect(Collectors.toList());
+        return shares.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public List<Share> getSharesByUserId(Long userId) {
@@ -84,6 +62,8 @@ public class ShareService {
         } else {
             share.getLikedUsers().add(user);
             share.setLikes(share.getLikes() + 1);
+            // 更新用户画像
+            recommendationService.updateUserProfile(userId, share, "like");
         }
 
         Share saved = shareRepository.save(share);
@@ -93,19 +73,29 @@ public class ShareService {
     @Transactional
     public void incrementViews(Long id) {
         shareRepository.updateViewCount(id);
-    }
-
-    private ShareDTO convertToDTO(Share share, Long userId) {
-        ShareDTO dto = new ShareDTO();
-        dto.setIsLiked(share.getLikedUsers().stream()
-                .anyMatch(u -> u.getId().equals(userId)));
-        dto.setLikes(share.getLikes());
-        return dto;
+        // 这里可以添加用户画像更新逻辑
     }
 
     public ShareDTO getShareById(Long shareId) {
         Share share = shareRepository.findById(shareId)
                 .orElseThrow(() -> new RuntimeException("Share not found"));
+        return convertToDTO(share);
+    }
+
+    public ShareDTO getShareById(Long shareId, Long userId) {
+        Share share = shareRepository.findById(shareId)
+                .orElseThrow(() -> new RuntimeException("Share not found"));
+        return convertToDTO(share, userId);
+    }
+
+    /**
+     * 获取推荐分享
+     */
+    public List<ShareDTO> getRecommendedShares(Long userId, int limit) {
+        return recommendationService.getRecommendedShares(userId, limit);
+    }
+
+    private ShareDTO convertToDTO(Share share) {
         ShareDTO dto = new ShareDTO();
         dto.setId(share.getId());
         dto.setTitle(share.getTitle());
@@ -113,10 +103,21 @@ public class ShareService {
         dto.setAuthorName(share.getAuthor().getUsername());
         dto.setAuthorAvatar(share.getAuthor().getAvatar());
         dto.setImages(share.getImages());
+        dto.setTags(share.getTags());
+        dto.setSportType(share.getSportType());
+        dto.setDifficultyLevel(share.getDifficultyLevel());
+        dto.setTargetAudience(share.getTargetAudience());
         dto.setLikes(share.getLikes());
         dto.setViews(share.getViews());
         dto.setCreatedAt(share.getCreatedAt());
         dto.setComments(commentService.getCommentCountByShareId(share.getId()).intValue());
+        dto.setIsLiked(false); // 默认设置为false，因为没有用户ID
+        return dto;
+    }
+
+    private ShareDTO convertToDTO(Share share, Long userId) {
+        ShareDTO dto = convertToDTO(share);
+        dto.setIsLiked(share.getLikedUsers().stream().anyMatch(u -> u.getId().equals(userId)));
         return dto;
     }
 }
