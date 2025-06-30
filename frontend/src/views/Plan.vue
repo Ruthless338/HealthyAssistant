@@ -5,7 +5,7 @@
     <div class="user-card glass">
       <div class="avatar-section">
         <div class="avatar-wrapper">
-          <img :src="'http://localhost:8000/uploads/'+user.avatar || defaultAvatar" class="user-avatar" />
+        <img :src="'http://localhost:8000/uploads/'+user.avatar || defaultAvatar" class="user-avatar" />
           <div class="avatar-ring"></div>
         </div>
         <div class="user-meta">
@@ -25,7 +25,7 @@
       <div class="health-stats">
         <div class="stat-item glass">
           <div class="stat-icon-wrapper">
-            <span class="stat-icon">🏋️</span>
+          <span class="stat-icon">🏋️</span>
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ user.height }}cm / {{ user.weight }}kg</div>
@@ -34,7 +34,7 @@
         </div>
         <div class="stat-item glass">
           <div class="stat-icon-wrapper">
-            <span class="stat-icon">📊</span>
+          <span class="stat-icon">📊</span>
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ bmi }}</div>
@@ -66,13 +66,13 @@
       >
         <div class="day-header">
           <div class="day-info">
-            <h3 class="day-title">
-              <span class="day-number">第 {{ dayIndex + 1 }} 天</span>
+          <h3 class="day-title">
+            <span class="day-number">第 {{ dayIndex + 1 }} 天</span>
               <span class="day-badge">Day {{ dayIndex + 1 }}</span>
             </h3>
             <div class="duration-info">
               <span class="duration-icon">⏱️</span>
-              <span class="duration">预计时长 {{ calculateDuration(day) }}</span>
+            <span class="duration">预计时长 {{ calculateDuration(day) }}</span>
             </div>
           </div>
           <div class="day-progress">
@@ -108,8 +108,8 @@
                     <div class="overlay-content">
                       <button class="demo-button" @click="showVideoDemo(exercise, dayIndex, exIndex)">
                         <span class="play-icon">▶️</span>
-                        <span>动作示范</span>
-                      </button>
+                      <span>动作示范</span>
+                    </button>
                     </div>
                   </div>
                 </div>
@@ -184,7 +184,7 @@
     <div v-if="error" class="error-notification glass">
       <div class="error-icon">⚠️</div>
       <div class="error-content">
-        <div class="error-message">{{ error }}</div>
+      <div class="error-message">{{ error }}</div>
         <button class="retry-button" @click="fetchExercisePlan">
           <span class="retry-icon">🔄</span>
           重试

@@ -64,11 +64,10 @@ export default{
     },
     data(){
         return {
-            activeIndex: 0,
             navItems: [ 
-              { name: '运动计划', route: 'Plan' },
-              { name: '运动记录', route: 'Record' },
-              { name: '运动社区', route: 'Community' },
+              { name: '运动计划', route: '/Plan' },
+              { name: '运动记录', route: '/Record' },
+              { name: '运动社区', route: '/Community' },
             ],
             logo: '', 
         }
@@ -78,18 +77,26 @@ export default{
         isLoggedIn() {
             return this.user.isLoggedIn;
         },
+        activeIndex() {
+            // 根据当前路由动态计算高亮项
+            const path = this.$route.path;
+            return this.navItems.findIndex(item => path === item.route);
+        }
+    },
+    watch: {
+        // 监听路由变化，自动高亮
+        '$route.path'() {
+            // 触发视图更新
+        }
     },
     methods:{
         handleNavClick(index, route){
-            this.activeIndex = index;
-            this.$emit('nav-click', route);
             this.$router.push(route);
         },
         handleLoginRegister(){
             this.$router.push({name:'LoginRegister'});
         },
         goToUserProfile(){
-            console.log('goToUserProfile');
             this.$router.push({name:'UserProfile'});
         },
         getNavIcon(name) {

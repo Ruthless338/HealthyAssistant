@@ -28,10 +28,41 @@ export default {
   computed:{
     ...mapState(['user']),
   },
+  mounted() {
+    this.checkUserProfile();
+  },
+  watch: {
+    user: {
+      handler() {
+        this.checkUserProfile();
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   methods:{
     handleRouteChange(route){
       this.$router.push(route);
       console.log('路由切换到: ', route);
+    },
+    checkUserProfile() {
+      const user = this.user;
+      if (
+        user &&
+        user.isLoggedIn &&
+        (
+          !user.gender ||
+          !user.age ||
+          !user.height ||
+          !user.weight ||
+          !user.goal || user.goal.length === 0 ||
+          !user.interest || user.interest.length === 0 ||
+          !user.part || user.part.length === 0
+        ) &&
+        this.$route.name !== 'Selector'
+      ) {
+        this.$router.replace({ name: 'Selector' });
+      }
     }
   },
 };
