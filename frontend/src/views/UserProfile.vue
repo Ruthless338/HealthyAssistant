@@ -108,6 +108,8 @@
       :shareId="selectedShareId"
       @close="closeShareDetail"
     />
+
+    <ChatBox />
   </div>
 </template>
 
@@ -115,10 +117,11 @@
 import axios from 'axios'
 import ShareDetail from '../components/ShareDetail.vue'
 import { format } from 'date-fns'
+import ChatBox from '../components/ChatBox.vue'
 
 export default {
   name: 'UserProfile',
-  components: { ShareDetail },
+  components: { ShareDetail, ChatBox },
   data() {
     return {
       user: {},

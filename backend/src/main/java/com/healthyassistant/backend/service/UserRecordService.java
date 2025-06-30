@@ -50,4 +50,8 @@ public class UserRecordService {
     public List<UserRecord> readRecordsByUsername(String username) {
         return userRecordRepository.findByUsername(username);
     }
+
+    public List<UserRecord> getRecordsByUsername(String username) {
+        return userRecordRepository.findByUsername(username);
+    }
 }

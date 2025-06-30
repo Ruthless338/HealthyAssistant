@@ -125,4 +125,30 @@ public class DeepSeekAIService {
             return false;
         }
     }
+
+    public String chatWithAI(String prompt) throws Exception {
+        Map<String, Object> requestBodyMap = new HashMap<>();
+        requestBodyMap.put("model", "deepseek-chat");
+        requestBodyMap.put("messages", List.of(Map.of("role", "user", "content", prompt)));
+        String requestBody = objectMapper.writeValueAsString(requestBodyMap);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + apiKey)
+                .timeout(Duration.ofSeconds(90))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            JsonNode rootNode = objectMapper.readTree(response.body());
+            String content = rootNode.path("choices").get(0).path("message").path("content").asText();
+            return content;
+        } else {
+            throw new RuntimeException("AI对话API调用失败: " + response.body());
+        }
+    }
 }

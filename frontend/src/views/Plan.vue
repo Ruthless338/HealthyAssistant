@@ -99,7 +99,7 @@
               <div class="media-wrapper">
                 <div class="image-frame">
                   <img
-                    :src="exercise.image"
+                    :src="exercise.image || defaultExerciseImage"
                     :alt="exercise.name"
                     class="exercise-image"
                     @error="handleImageError"

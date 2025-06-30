@@ -49,8 +49,8 @@ public class VideoController {
     @GetMapping("/status/{taskId}")
     public ResponseEntity<?> checkVideoStatus(@PathVariable String taskId) {
         try {
-            System.out.println("checkVideoStatus");
-            System.out.println(taskId);
+            // System.out.println("checkVideoStatus");
+            // System.out.println(taskId);
             VideoTask videoTask = videoGenerationService.checkVideoStatus(taskId);
 
             Map<String, Object> response = Map.of(

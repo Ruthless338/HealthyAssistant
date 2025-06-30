@@ -151,8 +151,11 @@ public class VideoGenerationService {
 
                 if ("SUCCESS".equals(status)) {
                     // 下载视频
+                    System.out.println("downloadVideo");
                     String videoUrl = getVideoUrl(taskId);
+                    System.out.println("videoUrl: " + videoUrl);
                     String localPath = downloadVideo(videoUrl, videoTask.getUserId());
+                    System.out.println("localPath: " + localPath);
                     videoTask.setVideoUrl(videoUrl);
                     videoTask.setLocalPath(localPath);
                 }
@@ -193,7 +196,7 @@ public class VideoGenerationService {
      * 获取视频URL
      */
     private String getVideoUrl(String taskId) throws Exception {
-        String checkUrl = "https://open.bigmodel.cn/api/paas/v4/videos/generations/" + taskId;
+        String checkUrl = "https://open.bigmodel.cn/api/paas/v4/async-result/" + taskId;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);

@@ -7,11 +7,13 @@ import lombok.Setter;
 import lombok.Getter;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity // 表示该类是一个实体类
 @Setter // 自动生成setter方法
 @Getter // 自动生成getter方法
 @Table(name = "user")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User {
     @Id // 表示该字段是主键
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 主键自增策略

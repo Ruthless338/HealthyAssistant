@@ -15,6 +15,7 @@ import com.healthyassistant.backend.service.DeepSeekAIService;
 import com.healthyassistant.backend.service.VideoGenerationService;
 import com.healthyassistant.backend.model.User;
 import com.healthyassistant.backend.service.UserService;
+import com.healthyassistant.backend.service.ImageGenerationService;
 
 // PlanController.java
 @RestController
@@ -26,6 +27,8 @@ public class PlanController {
     private UserService userService;
     @Autowired
     private VideoGenerationService videoGenerationService;
+    @Autowired
+    private ImageGenerationService imageGenerationService;
 
     @PostMapping("/generate")
     public ResponseEntity<?> generatePlan(@RequestParam Long id) {
@@ -39,6 +42,25 @@ public class PlanController {
             }
 
             WeekPlan plan = deepSeekAIService.generatePlan(user);
+
+            // 为每个动作生成专属图片
+            if (plan != null && plan.getWeekPlan() != null) {
+                for (var day : plan.getWeekPlan()) {
+                    if (day.getExercises() != null) {
+                        for (var exercise : day.getExercises()) {
+                            try {
+                                String prompt = "健身动作 " + exercise.getName() + "。"
+                                        + (exercise.getDescription() != null ? exercise.getDescription() : "");
+                                String imageUrl = imageGenerationService.generateImage(prompt);
+                                exercise.setImage(imageUrl);
+                            } catch (Exception e) {
+                                exercise.setImage("https://pic1.imgdb.cn/item/68161c4e58cb8da5c8d9ea4f.png"); // 失败用默认图
+                            }
+                        }
+                    }
+                }
+            }
+
             user.setCurrentPlan(plan);
             user.setProfileModified(false);
             userService.save(user);

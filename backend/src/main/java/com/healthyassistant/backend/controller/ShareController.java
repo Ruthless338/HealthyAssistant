@@ -37,6 +37,7 @@ public class ShareController {
     @GetMapping("/get")
     public ResponseEntity<List<Share>> getCurrentUserShares(
             @RequestParam Long userId) {
+        System.out.println("getSharesByUserId");
         return ResponseEntity.ok(shareService.getSharesByUserId(userId));
     }
 
