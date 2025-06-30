@@ -4,7 +4,7 @@
     <div class="profile-header glass">
       <div class="avatar-section">
         <div class="avatar-wrapper">
-          <img :src="'http://localhost:8000/uploads/'+user.avatar" class="user-avatar">
+        <img :src="'http://localhost:8000/uploads/'+user.avatar" class="user-avatar">
           <div class="avatar-status"></div>
         </div>
         <button class="edit-btn" @click="handleEdit">
@@ -571,11 +571,11 @@ export default {
 @media (max-width: 768px) {
   .user-profile-container {
     padding: 0 0.5rem;
-  }
-  
+}
+
   .profile-header {
     grid-template-columns: 1fr;
-    text-align: center;
+  text-align: center;
     gap: 1.5rem;
     padding: 1.5rem;
   }
@@ -587,8 +587,8 @@ export default {
   
   .username {
     font-size: 2rem;
-  }
-  
+}
+
   .meta-info {
     justify-content: center;
     gap: 1rem;

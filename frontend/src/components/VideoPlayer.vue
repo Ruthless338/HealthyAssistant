@@ -75,6 +75,9 @@ const videoTaskId = ref('')
 watch(() => props.show, (newVal) => {
   showModal.value = newVal
   if (newVal) {
+    videoStatus.value = ''
+    videoUrl.value = ''
+    videoTaskId.value = ''
     checkExistingVideo()
   }
 })
@@ -94,6 +97,7 @@ const checkExistingVideo = async () => {
       videoStatus.value = response.data.status
       videoUrl.value = response.data.videoUrl
       videoTaskId.value = response.data.taskId
+      console.log(response.data.videoUrl);
       
       if (response.data.status === 'PROCESSING') {
         pollVideoStatus()
@@ -172,6 +176,9 @@ const retryGeneration = async () => {
 // 关闭弹窗
 const closeModal = () => {
   showModal.value = false
+  videoStatus.value = ''
+  videoUrl.value = ''
+  videoTaskId.value = ''
   emit('close')
 }
 

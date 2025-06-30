@@ -109,31 +109,31 @@
         
         <div class="upload-section">
           <label class="input-label">图片</label>
-          <ImageUpload 
-            @uploaded="handleImageUpload"
-            @clear="clearImages"
-            class="uploader"
-          />
+      <ImageUpload 
+        @uploaded="handleImageUpload"
+        @clear="clearImages"
+        class="uploader"
+      />
         </div>
-        
+      
         <div v-if="form.images.length" class="preview-section">
           <label class="input-label">图片预览</label>
-          <div class="preview-grid">
-            <div 
-              v-for="(img, index) in form.images" 
-              :key="index" 
-              class="preview-item"
-              @mouseenter="hoverIndex = index"
-              @mouseleave="hoverIndex = -1"
-            >
+      <div class="preview-grid">
+        <div 
+          v-for="(img, index) in form.images" 
+          :key="index" 
+          class="preview-item"
+          @mouseenter="hoverIndex = index"
+          @mouseleave="hoverIndex = -1"
+        >
               <img :src="img" alt="预览" class="preview-image">
               <div class="preview-overlay" v-show="hoverIndex === index">
-                <button 
-                  @click="removeImage(index)"
-                  class="delete-btn"
-                >
+          <button 
+            @click="removeImage(index)"
+            class="delete-btn"
+          >
                   <span class="delete-icon">✕</span>
-                </button>
+          </button>
               </div>
             </div>
           </div>
@@ -644,8 +644,8 @@ export default {
   .primary-btn, .secondary-btn {
     width: 100%;
     justify-content: center;
-  }
-  
+}
+
   .preview-grid {
     grid-template-columns: repeat(3, 1fr);
   }

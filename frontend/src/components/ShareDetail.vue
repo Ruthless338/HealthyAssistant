@@ -40,10 +40,10 @@
             @click="openLightbox('http://localhost:8000/uploads/'+img)"
           >
             <img 
-              :src="'http://localhost:8000/uploads/'+img"
+            :src="'http://localhost:8000/uploads/'+img"
               class="gallery-image"
               @error="handleImageError"
-            >
+          >
           </div>
         </div>
       </div>
