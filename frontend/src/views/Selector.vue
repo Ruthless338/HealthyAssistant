@@ -162,15 +162,19 @@ export default {
       { label: '男性', value: 'male' },
       { label: '女性', value: 'female' }
     ]
+
+    // 从 store 中获取用户信息
+    const user = store.state.user;
+    
     const form = reactive({
-      gender: '',
-      age: null,
-      height: null,
-      weight: null,
-      goal: [],
-      interest: [],
-      part: [],
-      avatar: ''
+      gender: user.gender || '',
+      age: user.age || null,
+      height: user.height || null,
+      weight: user.weight || null,
+      goal: user.goal || [],
+      interest: user.interest || [],
+      part: user.part || [],
+      avatar: user.avatar || ''
     })
     const handleAvatarUpload = (url) => {
       form.avatar = url
@@ -197,7 +201,7 @@ export default {
     const submitForm = async () => {
       try {
         isSubmitting.value = true
-        const { username, password } = store.state.user // 确保 store 中有 user 数据
+        const { username, password } = store.state.user
         const formData = {
           username: username,
           password: password,
@@ -208,10 +212,31 @@ export default {
           goal: form.goal,
           interest: form.interest,
           part: form.part,
-          // currentPlan: currentPlan,
           avatar: form.avatar
         }
+
+        // 检查除头像外的信息是否发生变化
+        const currentUser = store.state.user;
+        const hasProfileChanged = 
+          currentUser.gender !== form.gender ||
+          currentUser.age !== form.age ||
+          currentUser.height !== form.height ||
+          currentUser.weight !== form.weight ||
+          JSON.stringify(currentUser.goal) !== JSON.stringify(form.goal) ||
+          JSON.stringify(currentUser.interest) !== JSON.stringify(form.interest) ||
+          JSON.stringify(currentUser.part) !== JSON.stringify(form.part);
+
         await axios.post('http://localhost:8000/api/auth/update', formData);
+        
+        // 如果除头像外的信息发生变化，发送请求重新生成计划
+        if (hasProfileChanged) {
+          try {
+            await axios.post(`http://localhost:8000/api/plan/generate?id=${store.state.user.id}`);
+          } catch (error) {
+            console.error('重新生成计划失败:', error);
+          }
+        }
+
         store.commit('setUser', {
           ...store.state.user,
           gender: form.gender,
@@ -223,7 +248,8 @@ export default {
           part: form.part,
           avatar: form.avatar
         });
-        alert('信息提交成功！')
+
+        alert(hasProfileChanged ? '信息已更新，正在为您重新生成运动计划！' : '信息已更新！');
         store.commit('setProfileModified', true);
         router.push({ name: 'Plan' });
       } catch (error) {

@@ -1,6 +1,6 @@
 <!-- ImageUpload.vue -->
 <script lang="ts">
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import axios from 'axios';
 
 export default {
@@ -12,29 +12,23 @@ export default {
     const isUploading = ref(false);
     const fileInput = ref<HTMLInputElement | null>(null);
 
-    const handleFileChange = (e: Event) => {
-      const input = e.target as HTMLInputElement;
+    const onFileChange = async (event: Event) => {
+      const input = event.target as HTMLInputElement;
       if (input.files?.length) {
         file.value = input.files[0];
         previewUrl.value = URL.createObjectURL(file.value);
-      }
-    };
-
-    const uploadFile = async () => {
-      if (!file.value) return;
-      isUploading.value = true;
-
-      const formData = new FormData();
-      formData.append('file', file.value);
-      try {
-        const response = await axios.post('http://localhost:8000/api/upload', formData);
-        console.log('上传成功:', response.data);
-        emit('uploaded', response.data);
-      } catch (error) {
-        console.error('上传失败:', error);
-        emit('clear');
-      } finally {
-        isUploading.value = false;
+        const formData = new FormData();
+        formData.append('file', file.value);
+        try {
+          const response = await axios.post('http://localhost:8000/api/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          console.log('上传成功:', response.data);
+          emit('uploaded', response.data);
+        } catch (error) {
+          console.error('上传失败:', error);
+          emit('clear');
+        }
       }
     };
 
@@ -44,11 +38,11 @@ export default {
       }
       file.value = null;
       previewUrl.value = '';
+      emit('clear');
     };
 
     return {
-      handleFileChange,
-      uploadFile,
+      onFileChange,
       previewUrl,
       file,
       isUploading,
@@ -63,17 +57,17 @@ export default {
   <div class="image-upload">
     <input 
       type="file" 
-      @change="handleFileChange" 
+      @change="onFileChange" 
       accept="image/*"
       ref="fileInput" 
     />
     <img v-if="previewUrl" :src="previewUrl" alt="Preview" class="preview" />
     <button 
       v-if="file" 
-      @click="uploadFile"
+      @click="clear"
       :disabled="isUploading" 
     >
-      {{ isUploading ? '上传中...' : '上传图片' }}
+      {{ isUploading ? '上传中...' : '重新选择图片' }}
     </button>
   </div>
 </template>

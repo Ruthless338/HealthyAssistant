@@ -53,6 +53,7 @@ public class PlanController {
                                         + (exercise.getDescription() != null ? exercise.getDescription() : "");
                                 String imageUrl = imageGenerationService.generateImage(prompt);
                                 exercise.setImage(imageUrl);
+                                System.out.println("imageUrl: " + imageUrl);
                             } catch (Exception e) {
                                 exercise.setImage("https://pic1.imgdb.cn/item/68161c4e58cb8da5c8d9ea4f.png"); // 失败用默认图
                             }

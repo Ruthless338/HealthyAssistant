@@ -99,7 +99,7 @@
               <div class="media-wrapper">
                 <div class="image-frame">
                   <img
-                    :src="exercise.image || defaultExerciseImage"
+                    :src="'http://localhost:8000'+exercise.image || defaultExerciseImage"
                     :alt="exercise.name"
                     class="exercise-image"
                     @error="handleImageError"
@@ -252,14 +252,18 @@ onMounted(async () => {
 // 方法定义
 const fetchExercisePlan = async () => {
   try {
-    if (user.value.currentPlan && !user.value.profileModified) {
-      exercisePlan.value = processPlan(user.value.currentPlan)
-      return ;
+    // 如果有缓存的计划且用户信息未修改，直接使用缓存
+    if (user.value.currentPlan && !store.state.profileModified) {
+      exercisePlan.value = processPlan(user.value.currentPlan);
+      return;
     }
-    console.log(user.value)
+
+    // 只有在没有计划或用户信息已更新时，才重新生成
     const response = await axios.post(`http://localhost:8000/api/plan/generate?id=${user.value.id}`);
     exercisePlan.value = processPlan(response.data);
     store.commit('updateUserPlan', response.data);
+    // 重置 profileModified 标志
+    store.commit('setProfileModified', false);
   } catch (err) {
     error.value = err.response?.data?.message || '网络连接异常'
   }
@@ -275,11 +279,10 @@ const processPlan = (plan) => ({
       interval: ex.interval ? `${ex.interval}秒` : '60秒',
       difficulty: ex.difficulty || 3,
       targetArea: ex.parts || ['全身'],
-      // image: ex.image || defaultExerciseImage,
-      image: defaultExerciseImage,
+      image: ex.image || defaultExerciseImage,
       favorited: false
     }))
-  }))
+  })),
 })
 
 const calculateDuration = (day) => {

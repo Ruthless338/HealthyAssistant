@@ -317,6 +317,8 @@
       :shareId="selectedShareId"
       @close="closeShareDetail"
     />
+
+    <button class="back-btn" @click="goCommunity">返回社区</button>
   </div>
 </template>
 
@@ -326,6 +328,7 @@ import ShareDetail from '../components/ShareDetail.vue'
 import { format } from 'date-fns'
 import { mapState } from 'vuex'
 import RecommendationVisualizer from '../components/RecommendationVisualizer.vue'
+import { useRouter } from 'vue-router'
 
 export default {
   components: { 
@@ -628,6 +631,11 @@ export default {
       const popularityScore = this.getPopularityScore(share) * 0.1;
       
       return sportTypeScore + difficultyScore + tagScore + targetScore + popularityScore;
+    },
+
+    goCommunity() {
+      // const router = useRouter()
+      this.$router.push({ name: 'Community' })
     }
   }
 }
@@ -1590,5 +1598,26 @@ export default {
     width: 28px;
     height: 28px;
   }
+}
+
+.back-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: var(--shadow-md);
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 </style> 

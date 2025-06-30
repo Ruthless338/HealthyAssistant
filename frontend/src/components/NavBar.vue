@@ -42,12 +42,15 @@
                     <div class="user-status">在线</div>
                 </div>
             </div>
+            <button class="logout-btn" @click="logout">退出登录</button>
         </div>
     </div>
 </template>
 <script>
 import GitHubLink from './GitHubLink.vue';
 import { mapState } from 'vuex'; 
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 export default{
     name:'NavBar',
     components:{
@@ -96,6 +99,13 @@ export default{
                 '运动社区': '👥'
             };
             return icons[name] || '📄';
+        },
+        logout() {
+            const store = useStore()
+            const router = useRouter()
+            store.commit('setUser', null)
+            localStorage.removeItem('user')
+            router.push({ name: 'Login' })
         }
     }
 }
@@ -330,6 +340,26 @@ export default{
   font-size: 0.75rem;
   color: var(--success-color);
   font-weight: 500;
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-xl);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
 }
 
 /* 响应式设计 */
