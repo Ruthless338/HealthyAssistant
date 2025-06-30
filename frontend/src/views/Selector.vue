@@ -211,7 +211,18 @@ export default {
           // currentPlan: currentPlan,
           avatar: form.avatar
         }
-        await axios.post('http://localhost:8000/api/auth/update', formData)
+        await axios.post('http://localhost:8000/api/auth/update', formData);
+        store.commit('setUser', {
+          ...store.state.user,
+          gender: form.gender,
+          age: form.age,
+          height: form.height,
+          weight: form.weight,
+          goal: form.goal,
+          interest: form.interest,
+          part: form.part,
+          avatar: form.avatar
+        });
         alert('信息提交成功！')
         store.commit('setProfileModified', true);
         router.push({ name: 'Plan' });

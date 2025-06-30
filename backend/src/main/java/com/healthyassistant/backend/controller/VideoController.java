@@ -109,12 +109,14 @@ public class VideoController {
                         "hasVideo", false));
             }
 
-            return ResponseEntity.ok(Map.of(
-                    "hasVideo", true,
-                    "taskId", videoTask.getTaskId(),
-                    "status", videoTask.getStatus(),
-                    "videoUrl", videoTask.getVideoUrl(),
-                    "localPath", videoTask.getLocalPath()));
+            // 用HashMap允许value为null
+            Map<String, Object> result = new java.util.HashMap<>();
+            result.put("hasVideo", true);
+            result.put("taskId", videoTask.getTaskId());
+            result.put("status", videoTask.getStatus());
+            result.put("videoUrl", videoTask.getVideoUrl());
+            result.put("localPath", videoTask.getLocalPath());
+            return ResponseEntity.ok(result);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
