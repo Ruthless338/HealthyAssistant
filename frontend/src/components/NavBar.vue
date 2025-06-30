@@ -34,11 +34,12 @@
             <!-- 用户头像和用户名 -->
             <div v-else class="user-profile glass" @click="goToUserProfile">
                 <div class="avatar-container">
-                    <img :src="'http://localhost:8000/uploads/'+user.avatar" alt="User Avatar" class="avatar" />
+                    <img v-if="user && user.avatar" :src="'http://localhost:8000/uploads/'+user.avatar" alt="User Avatar" class="avatar" />
+                    <img v-else alt="Default Avatar" class="avatar" />
                     <div class="avatar-status"></div>
                 </div>
                 <div class="user-info">
-                    <div class="username">{{ user.username || '用户' }}</div>
+                    <div class="username">{{ user && user.username ? user.username : '用户' }}</div>
                     <div class="user-status">在线</div>
                 </div>
             </div>
@@ -75,7 +76,7 @@ export default{
     computed: {
         ...mapState(['user']),
         isLoggedIn() {
-            return this.user.isLoggedIn;
+            return this.user && this.user.isLoggedIn;
         },
         activeIndex() {
             // 根据当前路由动态计算高亮项
@@ -108,11 +109,11 @@ export default{
             return icons[name] || '📄';
         },
         logout() {
-            const store = useStore()
-            const router = useRouter()
-            store.commit('setUser', null)
+            // const store = useStore()
+            // const router = useRouter()
+            this.$store.commit('setUser', null)
             localStorage.removeItem('user')
-            router.push({ name: 'Login' })
+            this.$router.push({ name: 'LoginRegister' })
         }
     }
 }

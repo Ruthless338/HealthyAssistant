@@ -48,7 +48,7 @@
     <div v-if="loading" class="loading-overlay">
       <div class="loader glass">
         <div class="spinner"></div>
-        <p class="loading-text">AI教练正在定制您的计划...</p>
+        <p class="loading-text">AI教练正在定制您的计划...(可能需要几分钟，请耐心等待；也可先浏览其他功能)</p>
         <div class="loading-dots">
           <span></span>
           <span></span>
